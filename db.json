@@ -1,0 +1,63 @@
+{
+  "teams": [
+    {
+      "id": "af14151f-1129-4ffa-9f7a-9f7c79b6f460",
+      "name": "Hold 1",
+      "score": 10
+    },
+    {
+      "id": "03861233-2003-4174-b24f-187f8d72a233",
+      "name": "Hold 2",
+      "score": 10
+    },
+    {
+      "id": "c8a2058a-c672-4734-819d-12dd2fca59f6",
+      "name": "Hold 3",
+      "score": 0
+    },
+    {
+      "id": "7769bb0b-f61a-4434-aded-3434e152d48e",
+      "name": "Hold 4",
+      "score": 0
+    },
+    {
+      "id": "c1c3f5ab-051a-4627-a64b-d117aa7f26e3",
+      "name": "Hold 5",
+      "score": 0
+    }
+  ],
+  "tasks": [
+    {
+      "id": "85ec18d2-3187-4e2f-abd0-420c2847d97d",
+      "title": "test1",
+      "options": [
+        {
+          "text": "hej",
+          "points": 10
+        },
+        {
+          "text": "farvel",
+          "points": 0
+        }
+      ]
+    }
+  ],
+  "records": [
+    {
+      "id": "4a0c18d3-a1bc-44a2-a95a-a2484b5d5b63",
+      "teamId": "af14151f-1129-4ffa-9f7a-9f7c79b6f460",
+      "taskId": "85ec18d2-3187-4e2f-abd0-420c2847d97d",
+      "optionIndex": 1,
+      "points": 0,
+      "time": 1754549913889
+    },
+    {
+      "id": "b8b6a245-da8d-4831-b869-aa3d4664f0a2",
+      "teamId": "03861233-2003-4174-b24f-187f8d72a233",
+      "taskId": "85ec18d2-3187-4e2f-abd0-420c2847d97d",
+      "optionIndex": 0,
+      "points": 10,
+      "time": 1754549926460
+    }
+  ]
+}

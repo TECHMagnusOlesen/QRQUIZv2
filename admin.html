@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    // Ensure cookies are sent for auth
+    axios.defaults.withCredentials = true;
+  </script>
+</head>
+<body>
+  <h1>Admin Dashboard</h1>
+  <div class="dashboard">
+    <!-- Teams Panel -->
+    <div class="panel">
+      <h2>Hold</h2>
+      <label>Antal hold:</label>
+      <select id="teamCount"></select>
+      <button onclick="addTeams()">Tilføj hold</button>
+      <button onclick="downloadTeamPDF()">Download Hold PDF</button>
+      <button onclick="resetTeams()">Reset Hold</button>
+      <table>
+        <thead><tr><th>Hold</th><th>Score</th></tr></thead>
+        <tbody id="teamTableBody"></tbody>
+      </table>
+    </div>
+    <!-- Tasks Panel -->
+    <div class="panel">
+      <h2>Opgaver</h2>
+      <button onclick="showTaskForm()">Tilføj spørgsmål</button>
+      <form id="taskForm" style="display:none; margin-top:10px;">
+        <input id="taskTitle" type="text" placeholder="Spørgsmål" required><br>
+        <div id="taskOpts"></div>
+        <button type="button" onclick="addTaskOpt()">Tilføj svar</button><br>
+        <button type="submit">Gem Opgave</button>
+      </form>
+      <table>
+        <thead><tr><th>Spørgsmål</th><th>Handling</th></tr></thead>
+        <tbody id="taskTableBody"></tbody>
+      </table>
+      <div class="pagination">
+        <button onclick="prevPage()">Forrige</button>
+        <span id="pageInfo"></span>
+        <button onclick="nextPage()">Næste</button>
+      </div>
+    </div>
+    <!-- PDF Task Panel -->
+    <div class="panel">
+      <h2>Opgave PDF</h2>
+      <select id="taskSelectPDF"></select>
+      <button onclick="downloadTaskPDF()">Download Opgave PDF</button>
+    </div>
+    <!-- Bonus/Reset Panel -->
+    <div class="panel">
+      <h2>Ekstra Point & Reset Event</h2>
+      <button onclick="resetEvent()">Reset Event</button><br>
+      <label for="bonusTeamSelect">Vælg hold:</label>
+      <select id="bonusTeamSelect"></select>
+      <input id="bonusPointsInput" type="number" placeholder="Bonus point">
+      <button onclick="addBonus()">Giv Bonus</button>
+    </div>
+  </div>
+
+  <script>
+    // Initialize dropdown for number of teams
+    for (let i = 1; i <= 20; i++) {
+      document.getElementById('teamCount').append(new Option(i, i));
+    }
+
+    let tasks = [];
+    let currentPage = 1;
+    const pageSize = 10;
+
+    // Helper to fetch image as DataURL
+    async function fetchImageData(url) {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    // Load state from server
+    async function loadState() {
+      const res = await axios.get('/api/admin/state');
+      // Render teams scoreboard
+      const teamBody = document.getElementById('teamTableBody'); teamBody.innerHTML = '';
+      const bonusSel = document.getElementById('bonusTeamSelect'); bonusSel.innerHTML = '';
+      res.data.teams.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${t.name}</td><td>${t.score}</td>`;
+        teamBody.appendChild(tr);
+        bonusSel.append(new Option(t.name, t.id));
+      });
+      // Render tasks list
+      tasks = res.data.tasks;
+      renderTasks();
+      // Populate PDF dropdown
+      const pdfSel = document.getElementById('taskSelectPDF'); pdfSel.innerHTML = '';
+      tasks.forEach(task => pdfSel.append(new Option(task.title, task.id)));
+    }
+
+    // Render paginated tasks
+    function renderTasks() {
+      const tbody = document.getElementById('taskTableBody'); tbody.innerHTML = '';
+      const total = tasks.length;
+      const pages = Math.max(Math.ceil(total / pageSize), 1);
+      currentPage = Math.min(Math.max(1, currentPage), pages);
+      const start = (currentPage - 1) * pageSize;
+      for (let i = start; i < Math.min(start + pageSize, total); i++) {
+        const task = tasks[i];
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${task.title}</td>
+          <td>
+            <button onclick="downloadSingleTaskPDF('${task.id}')">PDF</button>
+            <button onclick="deleteTask('${task.id}')">Slet</button>
+          </td>`;
+        tbody.appendChild(tr);
+      }
+      document.getElementById('pageInfo').innerText = `${currentPage} / ${pages}`;
+    }
+
+    function prevPage() { currentPage--; renderTasks(); }
+    function nextPage() { currentPage++; renderTasks(); }
+
+    // Delete a task after confirmation
+    async function deleteTask(taskId) {
+      if (!confirm('Er du sikker på at slette det?')) return;
+      await axios.delete(`/api/admin/tasks/${taskId}`);
+      loadState();
+    }
+
+    // Create teams batch
+    async function addTeams() {
+      const count = +document.getElementById('teamCount').value;
+      await axios.post('/api/admin/teams/create', { count });
+      loadState();
+    }
+
+    // Download PDF for all teams with unique QR
+    async function downloadTeamPDF() {
+      const res = await axios.get('/api/admin/state');
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      for (let i = 0; i < res.data.teams.length; i++) {
+        const t = res.data.teams[i];
+        if (i > 0) doc.addPage();
+        doc.setFontSize(24);
+        doc.text(t.name, 105, 20, { align: 'center' });
+        const qrUrl = `${location.origin}/join.html?teamId=${t.id}`;
+        const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrUrl)}`;
+        const imgData = await fetchImageData(qrApi);
+        doc.addImage(imgData, 'PNG', 55, 40, 100, 100);
+      }
+      doc.save('hold.pdf');
+    }
+
+    // Download PDF for one task with unique QR per answer
+    async function downloadSingleTaskPDF(taskId) {
+      const task = tasks.find(t => t.id === taskId);
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      for (let i = 0; i < task.options.length; i++) {
+        const opt = task.options[i];
+        if (i > 0) doc.addPage();
+        doc.setFontSize(18);
+        doc.text(task.title, 10, 20);
+        doc.text(`Svar: ${opt.text}`, 10, 30);
+        doc.text(`Point: ${opt.points}`, 10, 40);
+        const qrUrl = `${location.origin}/scan?taskId=${taskId}&optionIndex=${i}`;
+        const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrUrl)}`;
+        const imgData = await fetchImageData(qrApi);
+        doc.addImage(imgData, 'PNG', 10, 50, 80, 80);
+      }
+      doc.save(`opgave_${task.title}.pdf`);
+    }
+
+    // Download PDF for selected task
+    async function downloadTaskPDF() {
+      const taskId = document.getElementById('taskSelectPDF').value;
+      await downloadSingleTaskPDF(taskId);
+    }
+
+    // Reset hold: delete teams and records
+    async function resetTeams() {
+      await axios.post('/api/admin/teams/reset');
+      loadState();
+    }
+
+    // Reset event: reset scores and records only
+    async function resetEvent() {
+      await axios.post('/api/admin/reset');
+      loadState();
+    }
+
+    // Give bonus points
+    async function addBonus() {
+      const teamId = document.getElementById('bonusTeamSelect').value;
+      const extra = +document.getElementById('bonusPointsInput').value;
+      await axios.post('/api/admin/bonus', { teamId, extra });
+      loadState();
+    }
+
+    // Show task form
+    function showTaskForm() {
+      document.getElementById('taskForm').style.display = 'block';
+    }
+
+    let optIdx = 0;
+    function addTaskOpt() {
+      const c = document.getElementById('taskOpts');
+      c.insertAdjacentHTML('beforeend',
+        `<input data-text placeholder="Svar ${optIdx+1}" required>
+         <input data-points type="number" placeholder="Point" required><br>`);
+      optIdx++;
+    }
+
+    // Handle form submit
+    document.getElementById('taskForm').onsubmit = async e => {
+      e.preventDefault();
+      const title = document.getElementById('taskTitle').value;
+      const texts = Array.from(document.querySelectorAll('[data-text]')).map(x => x.value);
+      const pts = Array.from(document.querySelectorAll('[data-points]')).map(x => +x.value);
+      await axios.post('/api/tasks', { title, options: texts.map((t,i) => ({ text: t, points: pts[i] })) });
+      alert('Opgave gemt');
+      document.getElementById('taskForm').reset();
+      document.getElementById('taskForm').style.display = 'none';
+      optIdx = 0;
+      document.getElementById('taskOpts').innerHTML = '';
+      loadState();
+    };
+
+    // On load
+    window.onload = loadState;
+  </script>
+</body>
+</html>

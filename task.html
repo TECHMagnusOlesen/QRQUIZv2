@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="da">
+<head><meta charset="UTF-8"><title>Opgave</title></head>
+<body>
+  <h1 id="title"></h1>
+  <div id="opts"></div>
+  <p id="feedback"></p>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const taskId = params.get('taskId');
+    async function loadTask() {
+      const res = await axios.get('/api/admin/state');
+      const task = res.data.tasks.find(t => t.id === taskId);
+      document.getElementById('title').innerText = task.title;
+      const opts = document.getElementById('opts');
+      task.options.forEach((o,i) => {
+        const btn = document.createElement('button');
+        btn.innerText = `${o.text} (${o.points} p)`;
+        btn.onclick = async () => {
+          const r = await axios.post('/api/records', { taskId, optionIndex: i });
+          document.getElementById('feedback').innerText = `I har nu ${r.data.score} point`;
+        };
+        opts.appendChild(btn);
+      });
+    }
+    loadTask();
+  </script>
+</body>
+</html>

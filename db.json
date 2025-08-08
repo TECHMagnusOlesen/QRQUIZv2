@@ -1,103 +1,38 @@
 {
   "teams": [
     {
-      "id": "34626ae2-5f17-4531-a3f3-29a8e1047309",
+      "id": "b9af7e00-9974-4ef6-8229-ec9eea171ae8",
       "name": "Hold 1",
       "score": 0
     },
     {
-      "id": "576a3584-22e8-4ede-b469-7b24bde9b346",
+      "id": "acb6c947-b1e2-4a44-945c-07776003c36f",
       "name": "Hold 2",
       "score": 0
     },
     {
-      "id": "7cb53ecb-1742-4c09-a6ca-bafb6817f6da",
+      "id": "bf91ad82-25ae-4ef6-9b27-e5e042b4222b",
       "name": "Hold 3",
       "score": 0
     },
     {
-      "id": "39bbc932-2307-41d3-a9e6-262d0abb3caa",
+      "id": "78543350-638f-4b6f-924f-d6aa4cb2810f",
       "name": "Hold 4",
       "score": 0
     },
     {
-      "id": "4914a64a-a3b6-4f51-a595-f818d6b7292f",
+      "id": "37446fd3-d626-44a3-8372-faba217ee395",
       "name": "Hold 5",
       "score": 0
     },
     {
-      "id": "f8cc14e8-4638-48e8-a692-b2858d7fd242",
+      "id": "636e2bdd-1d83-43cd-b999-4d9d2f59ff6c",
       "name": "Hold 6",
       "score": 0
     },
     {
-      "id": "58ebda04-2c7b-4f19-9e49-1f7f26c15d2f",
+      "id": "42378feb-3658-411d-9941-cc7de9279bc0",
       "name": "Hold 7",
-      "score": 0
-    },
-    {
-      "id": "0aaeac90-2de5-4756-8fea-0696c3aacf48",
-      "name": "Hold 8",
-      "score": 0
-    },
-    {
-      "id": "0a8f2b55-b408-400c-bcda-a922b58b2e24",
-      "name": "Hold 9",
-      "score": 0
-    },
-    {
-      "id": "460eff09-d667-4e3a-8ce9-d82fb5fac280",
-      "name": "Hold 10",
-      "score": 0
-    },
-    {
-      "id": "1f7f133f-63d8-4401-86fa-8363b0007be0",
-      "name": "Hold 11",
-      "score": 0
-    },
-    {
-      "id": "0734e4b5-a4aa-4a5e-b99e-640bc3df6b16",
-      "name": "Hold 12",
-      "score": 0
-    },
-    {
-      "id": "a005d11e-9c5e-4096-b4f7-a4716a828ba4",
-      "name": "Hold 13",
-      "score": 0
-    },
-    {
-      "id": "ab3c8298-4fa7-487d-bada-dcaad898064d",
-      "name": "Hold 14",
-      "score": 0
-    },
-    {
-      "id": "16953fdf-7bcf-4b93-ae70-ac571c0c6f52",
-      "name": "Hold 15",
-      "score": 0
-    },
-    {
-      "id": "f9badf27-662d-4a2f-8efb-0e884b0175b4",
-      "name": "Hold 16",
-      "score": 0
-    },
-    {
-      "id": "428f3f48-c57d-4c0e-b3b3-cb831c0da94e",
-      "name": "Hold 17",
-      "score": 0
-    },
-    {
-      "id": "98e33e05-3273-434f-a0fe-486543cbeeaa",
-      "name": "Hold 18",
-      "score": 0
-    },
-    {
-      "id": "5bfc8729-e10e-4df5-9cfc-7b43decb6885",
-      "name": "Hold 19",
-      "score": 0
-    },
-    {
-      "id": "0db91e92-4bc4-41bb-b423-b9c0dbc57d2f",
-      "name": "Hold 20",
       "score": 0
     }
   ],
@@ -619,7 +554,93 @@
           "points": 5
         }
       ]
+    },
+    {
+      "id": "c56f2931-7494-47ec-ac10-e8502366f93a",
+      "title": "test spørgsmål",
+      "options": [
+        {
+          "text": "svar 1",
+          "points": 10
+        },
+        {
+          "text": "svar 2",
+          "points": 20
+        }
+      ]
     }
   ],
-  "records": []
+  "records": [],
+  "users": [
+    {
+      "id": "3e634afa-d4d3-4fa4-8ab3-74e0c9e48b86",
+      "username": "mago",
+      "salt": "ab13ac6d3ff2596903685f160649d936",
+      "hash": "5df46d8a0e6e9c6fd1d3fd7f06f551ecb742365723d620c18e4847a8f3f5364854f4a4f5e5a3682e96eeb446e7765433ac63244ce4c47d4cc14313ede4193cb5",
+      "created": 1754692496650
+    }
+  ],
+  "events": [
+    {
+      "id": "ff8bca4e-f7c1-4a97-bfb7-74015ee7c4c5",
+      "name": "Metal Challenge 2025",
+      "teamIds": [
+        "b9af7e00-9974-4ef6-8229-ec9eea171ae8",
+        "acb6c947-b1e2-4a44-945c-07776003c36f",
+        "bf91ad82-25ae-4ef6-9b27-e5e042b4222b",
+        "78543350-638f-4b6f-924f-d6aa4cb2810f",
+        "37446fd3-d626-44a3-8372-faba217ee395",
+        "636e2bdd-1d83-43cd-b999-4d9d2f59ff6c",
+        "42378feb-3658-411d-9941-cc7de9279bc0"
+      ],
+      "taskIds": [
+        "06f64f94-3776-4c74-bd52-c419e5b4f278",
+        "009af249-9dba-4d17-b105-df90ee5b553e",
+        "0085a2e6-aab7-491c-a29e-45ef106b7465",
+        "b0f71469-f9e4-405d-ad4d-2f090929d7f9",
+        "88b4f811-13d3-4311-834b-bdc9a915adba",
+        "cd382e44-1396-4842-8ea3-1a80ad52098b",
+        "4c2e4f69-1cef-4ca1-b2c7-bb9cedef62ed",
+        "3dfed741-9a44-4298-a0ba-98eb0f33804e",
+        "c88e29de-c01e-4931-bd4d-b8bc1f93f6e4",
+        "3b847e1d-6a05-412a-9757-f3a178129b57",
+        "aa0f1837-3341-4f7b-93c2-9f62d7dcedb1",
+        "0e006eee-c3e3-46b2-a38f-83e76f403735",
+        "a74b1bde-e9a4-4f11-85e7-9ef69c74b239",
+        "0bb03d79-d2d2-43a3-a348-df41d89926dd",
+        "3b41bede-9d87-4a4b-8dd0-7d573da69e28",
+        "f17ffd00-2044-4ead-a577-c0adec4ac748",
+        "887b6cc4-5416-4ead-abd1-1e83307f996c",
+        "6b38f67d-a6c7-4d90-b4be-a7c444d6b478",
+        "47bbc252-a91b-4290-9e21-987879fa6ca8",
+        "ad2c795d-852a-47bc-97c5-c22c3be0b588",
+        "a1a09829-33cd-4fa9-a116-b3c514de11b8",
+        "93d0b92c-1ec0-4965-b73e-31db13bbf0d7",
+        "a6ec1e66-2224-4988-a557-e1bfe1b277f0",
+        "074b87a3-584f-429c-9013-9fba95cb83e3",
+        "d5fe7a70-a8f7-420b-8c1c-f10fb1f643d3",
+        "81ff0aa8-81cc-4f4d-827b-1db88e38838a",
+        "c199d7d5-4bb1-41a1-a72b-9307f07763b1",
+        "3958aad6-11eb-4dd8-8cd0-9fbd0b9e9d6b",
+        "b629e3d8-ed6e-4165-9591-7b4fb7626597"
+      ],
+      "created": 1754692814743
+    }
+  ],
+  "logs": [
+    {
+      "id": "254b6000-4650-4efa-85cd-bfd195681f89",
+      "type": "join",
+      "teamId": "b9af7e00-9974-4ef6-8229-ec9eea171ae8",
+      "eventId": "ff8bca4e-f7c1-4a97-bfb7-74015ee7c4c5",
+      "time": 1754693805341
+    },
+    {
+      "id": "ac4ff742-b711-4c2d-bd52-95731969b0d5",
+      "type": "join",
+      "teamId": "b9af7e00-9974-4ef6-8229-ec9eea171ae8",
+      "eventId": "ff8bca4e-f7c1-4a97-bfb7-74015ee7c4c5",
+      "time": 1754694086744
+    }
+  ]
 }

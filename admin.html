@@ -6,237 +6,403 @@
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script>
-    // Ensure cookies are sent for auth
-    axios.defaults.withCredentials = true;
-  </script>
+  <script>axios.defaults.withCredentials = true;</script>
+  <style>
+    body { background:#f3f4f6; color:#111827; font:14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Helvetica, Arial, sans-serif; margin:0; }
+    .tabs { display:flex; gap:8px; padding:12px 16px; border-bottom:1px solid #e5e7eb; background:#fff; position:sticky; top:0; z-index:10; }
+    .tab-spacer{flex:1}
+    .tab { appearance:none; border:1px solid #e5e7eb; background:#f9fafb; color:#1f2937; padding:8px 12px; border-radius:8px; cursor:pointer }
+    .tab.active { background:#e8f0fe; border-color:#93c5fd; color:#1d4ed8; }
+    .tabpages { padding:16px; display:grid; gap:16px; }
+    .tabpage { display:none; }
+    .tabpage.active { display:block; }
+    .panel { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:14px; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+    .panel h2 { margin:0 0 8px 0; font-size:18px; }
+    .row { display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; }
+    .spacer { flex:1 }
+    .table-wrap { border:1px solid #e5e7eb; border-radius:10px; overflow:auto }
+    table { width:100%; border-collapse:collapse; }
+    thead th { text-align:left; padding:10px; border-bottom:1px solid #e5e7eb; background:#f9fafb; position:sticky; top:0; }
+    tbody td { padding:10px; border-bottom:1px solid #f3f4f6; }
+    .pagination { display:flex; gap:10px; justify-content:flex-end; align-items:center; }
+    input, select, button { outline:none; }
+    input, select { background:#fff; border:1px solid #e5e7eb; color:#111827; padding:8px 10px; border-radius:8px; }
+    button { border:1px solid #2563eb; background:#2563eb; color:#fff; padding:8px 12px; border-radius:8px; cursor:pointer }
+    button.warn { border-color:#d97706; background:#d97706; }
+    button.danger { border-color:#dc2626; background:#dc2626; }
+    small.muted { color:#6b7280; }
+
+    .event-grid { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:16px; }
+    @media (max-width: 1024px){ .event-grid { grid-template-columns: 1fr; } }
+
+    .input-row { display:flex; gap:8px; align-items:center; margin:6px 0; }
+    .w100 { width:100% }
+  </style>
 </head>
 <body>
-  <h1>Admin Dashboard</h1>
-  <div class="dashboard">
-    <!-- Teams Panel -->
-    <div class="panel">
-      <h2>Hold</h2>
-      <label>Antal hold:</label>
-      <select id="teamCount"></select>
-      <button onclick="addTeams()">Tilføj hold</button>
-      <button onclick="downloadTeamPDF()">Download Hold PDF</button>
-      <button onclick="resetTeams()">Reset Hold</button>
-      <table>
-        <thead><tr><th>Hold</th><th>Score</th></tr></thead>
-        <tbody id="teamTableBody"></tbody>
-      </table>
-    </div>
-    <!-- Tasks Panel -->
-    <div class="panel">
-      <h2>Opgaver</h2>
-      <button onclick="showTaskForm()">Tilføj spørgsmål</button>
-      <form id="taskForm" style="display:none; margin-top:10px;">
-        <input id="taskTitle" type="text" placeholder="Spørgsmål" required><br>
-        <div id="taskOpts"></div>
-        <button type="button" onclick="addTaskOpt()">Tilføj svar</button><br>
-        <button type="submit">Gem Opgave</button>
-      </form>
-      <table>
-        <thead><tr><th>Spørgsmål</th><th>Handling</th></tr></thead>
-        <tbody id="taskTableBody"></tbody>
-      </table>
-      <div class="pagination">
-        <button onclick="prevPage()">Forrige</button>
-        <span id="pageInfo"></span>
-        <button onclick="nextPage()">Næste</button>
+  <div class="tabs">
+    <button class="tab active" data-tab="teams">Hold</button>
+    <button class="tab" data-tab="tasks">Opgaver</button>
+    <button class="tab" data-tab="events">Events</button>
+    <button class="tab" data-tab="logs">Logs & Backup</button>
+    <button class="tab" data-tab="control">Kontrol</button>
+    <span class="tab-spacer"></span>
+    <button class="tab" data-tab="users">Brugere</button>
+  </div>
+
+  <div class="tabpages">
+    <!-- TEAMS -->
+    <section id="tab-teams" class="tabpage active">
+      <div class="panel">
+        <h2>Hold</h2>
+        <div class="row">
+          <label>Antal hold:</label>
+          <select id="teamCount"></select>
+          <button onclick="addTeams()">Tilføj hold</button>
+          <div class="spacer"></div>
+          <button onclick="downloadTeamPDF()">Download Hold PDF</button>
+        </div>
+        <div class="table-wrap" style="margin-top:10px">
+          <table>
+            <thead><tr><th>Hold</th><th>Score</th></tr></thead>
+            <tbody id="teamTableBody"></tbody>
+          </table>
+        </div>
       </div>
-    </div>
-    <!-- PDF Task Panel -->
-    <div class="panel">
-      <h2>Opgave PDF</h2>
-      <select id="taskSelectPDF"></select>
-      <button onclick="downloadTaskPDF()">Download Opgave PDF</button>
-    </div>
-    <!-- Bonus/Reset Panel -->
-    <div class="panel">
-      <h2>Ekstra Point & Reset Event</h2>
-      <button onclick="resetEvent()">Reset Event</button><br>
-      <label for="bonusTeamSelect">Vælg hold:</label>
-      <select id="bonusTeamSelect"></select>
-      <input id="bonusPointsInput" type="number" placeholder="Bonus point">
-      <button onclick="addBonus()">Giv Bonus</button>
-    </div>
+    </section>
+
+    <!-- TASKS -->
+    <section id="tab-tasks" class="tabpage">
+      <div class="panel">
+        <h2>Opgaver</h2>
+        <button onclick="showTaskForm()">Tilføj spørgsmål</button>
+        <form id="taskForm" style="display:none; margin-top:10px;">
+          <input id="taskTitle" type="text" placeholder="Spørgsmål" required><br>
+          <div id="taskOpts" style="margin:8px 0;"></div>
+          <button type="button" onclick="addTaskOpt()">Tilføj svar</button><br>
+          <button type="submit">Gem Opgave</button>
+        </form>
+        <div class="table-wrap" style="margin-top:12px">
+          <table>
+            <thead><tr><th>Spørgsmål</th><th>Handling</th></tr></thead>
+            <tbody id="taskTableBody"></tbody>
+          </table>
+        </div>
+        <div class="pagination" style="margin-top:8px">
+          <button onclick="prevPage()">Forrige</button>
+          <span id="pageInfo"></span>
+          <button onclick="nextPage()">Næste</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Opgave PDF</h2>
+        <div class="row">
+          <select id="taskSelectPDF"></select>
+          <button onclick="downloadTaskPDF()">Download Opgave PDF</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- EVENTS -->
+    <section id="tab-events" class="tabpage">
+      <div class="panel">
+        <h2>Events</h2>
+        <div class="event-grid">
+          <div>
+            <label>Event navn</label><br>
+            <input id="eventName" placeholder="Event navn">
+            <div class="input-row"><small class="muted">Tip: Hold <b>Shift</b> nede for at vælge en sammenhængende række, og <b>Ctrl</b>/<b>Cmd</b> for at vælge enkelte.</small></div>
+          </div>
+          <div>
+            <label>Hold i event</label>
+            <div class="input-row"><input id="searchTeams" class="w100" placeholder="Søg i hold…"></div>
+            <select id="eventTeams" multiple size="8" style="min-width:220px; width:100%"></select>
+          </div>
+          <div>
+            <label>Opgaver i event</label>
+            <div class="input-row"><input id="searchTasks" class="w100" placeholder="Søg i opgaver…"></div>
+            <select id="eventTasks" multiple size="8" style="min-width:260px; width:100%"></select>
+          </div>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <button onclick="createAdminEvent()">Opret Event</button>
+        </div>
+
+        <div class="table-wrap" style="margin-top:12px">
+          <table id="eventsTable">
+            <thead><tr><th>Event</th><th>#Hold</th><th>#Opgaver</th><th>Handling</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Efter-tilføj til eksisterende event</h2>
+        <div class="row">
+          <select id="eventSelectEdit" style="min-width:220px"></select>
+        </div>
+        <div class="event-grid" style="margin-top:10px">
+          <div>
+            <label>Tilføj hold</label>
+            <div class="input-row"><input id="searchTeamsEdit" class="w100" placeholder="Søg i hold…"></div>
+            <select id="eventTeamsEdit" multiple size="8" style="min-width:220px; width:100%"></select>
+          </div>
+          <div>
+            <label>Tilføj opgaver</label>
+            <div class="input-row"><input id="searchTasksEdit" class="w100" placeholder="Søg i opgaver…"></div>
+            <select id="eventTasksEdit" multiple size="8" style="min-width:260px; width:100%"></select>
+          </div>
+          <div style="align-self:end">
+            <button onclick="appendToEvent()">Tilføj til Event</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOGS & BACKUP -->
+    <section id="tab-logs" class="tabpage">
+      <div class="panel">
+        <h2>Backup & Logs</h2>
+        <div class="row">
+          <button onclick="backupDb()">Download db.json backup</button>
+          <div class="spacer"></div>
+          <label for="logTeamFilter">Filtrer på hold:</label>
+          <select id="logTeamFilter"></select>
+          <button onclick="loadLogs()">Opdater log</button>
+          <button class="danger" onclick="clearLogs()">Ryd log</button>
+        </div>
+        <div class="table-wrap" style="margin-top:10px; max-height:320px; overflow:auto">
+          <table id="logsTable" style="min-width:700px;">
+            <thead>
+              <tr><th>Tid</th><th>Beskrivelse</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTROL -->
+    <section id="tab-control" class="tabpage">
+      <div class="panel">
+        <h2>Kontrol</h2>
+        <div class="row">
+          <label for="bonusTeamSelect">Vælg hold</label>
+          <select id="bonusTeamSelect"></select>
+          <input id="bonusPointsInput" type="number" placeholder="Bonus point" style="width:120px">
+          <button onclick="addBonus()">Giv Bonus</button>
+          <div class="spacer"></div>
+          <button class="warn" onclick="resetEvent()">Reset Event (nulstil scores)</button>
+          <button class="danger" onclick="resetTeams()">Reset Hold (slet alle hold)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- USERS -->
+    <section id="tab-users" class="tabpage">
+      <div class="panel">
+        <h2>Brugere</h2>
+        <div class="row">
+          <input id="newUserName" placeholder="Brugernavn">
+          <input id="newUserPass" type="password" placeholder="Adgangskode">
+          <button onclick="addUser()">Tilføj bruger</button>
+        </div>
+        <div class="table-wrap" style="margin-top:10px">
+          <table>
+            <thead><tr><th>Bruger</th><th>Oprettet</th></tr></thead>
+            <tbody id="usersTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
   </div>
 
   <script>
-    // Initialize dropdown for number of teams
-    for (let i = 1; i <= 20; i++) {
-      document.getElementById('teamCount').append(new Option(i, i));
-    }
+    // Tabs
+    const tabButtons = Array.from(document.querySelectorAll('.tab'));
+    const tabPages = {
+      teams: document.getElementById('tab-teams'),
+      tasks: document.getElementById('tab-tasks'),
+      events: document.getElementById('tab-events'),
+      logs: document.getElementById('tab-logs'),
+      control: document.getElementById('tab-control'),
+      users: document.getElementById('tab-users'),
+    };
+    tabButtons.forEach(btn => btn.addEventListener('click', () => {
+      tabButtons.forEach(b => b.classList.remove('active'));
+      Object.values(tabPages).forEach(p => p.classList.remove('active'));
+      btn.classList.add('active'); tabPages[btn.dataset.tab].classList.add('active');
+    }));
 
-    let tasks = [];
-    let currentPage = 1;
-    const pageSize = 10;
+    // Data/state
+    for (let i = 1; i <= 20; i++) document.getElementById('teamCount').append(new Option(i, i));
+    let tasks = [], teams = [], events = [], users = [];
+    let currentPage = 1, pageSize = 10;
 
-    // Helper to fetch image as DataURL
-    async function fetchImageData(url) {
-      const res = await fetch(url);
-      const blob = await res.blob();
-      return new Promise(resolve => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.readAsDataURL(blob);
+    async function fetchImageData(url) { const res = await fetch(url); const blob = await res.blob(); return new Promise(r => { const fr = new FileReader(); fr.onloadend=()=>r(fr.result); fr.readAsDataURL(blob); }); }
+
+    // --- search helpers ---
+    function filterSelect(selectEl, query) {
+      const q = query.trim().toLowerCase();
+      Array.from(selectEl.options).forEach(opt => {
+        opt.hidden = q && !opt.text.toLowerCase().includes(q);
       });
     }
+    function setupSearch(inputId, selectId) {
+      const input = document.getElementById(inputId);
+      const select = document.getElementById(selectId);
+      input.addEventListener('input', () => filterSelect(select, input.value));
+    }
 
-    // Load state from server
     async function loadState() {
-      const res = await axios.get('/api/admin/state');
-      // Render teams scoreboard
+      const res = await axios.get('/api/admin/state'); teams = res.data.teams; tasks = res.data.tasks;
+      // Teams
       const teamBody = document.getElementById('teamTableBody'); teamBody.innerHTML = '';
       const bonusSel = document.getElementById('bonusTeamSelect'); bonusSel.innerHTML = '';
-      res.data.teams.forEach(t => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${t.name}</td><td>${t.score}</td>`;
-        teamBody.appendChild(tr);
-        bonusSel.append(new Option(t.name, t.id));
-      });
-      // Render tasks list
-      tasks = res.data.tasks;
+      const logFilter = document.getElementById('logTeamFilter'); logFilter.innerHTML = '<option value="">Alle</option>';
+      teams.forEach(t => { const tr = document.createElement('tr'); tr.innerHTML = `<td>${t.name}</td><td>${t.score}</td>`; teamBody.appendChild(tr); bonusSel.append(new Option(t.name, t.id)); logFilter.append(new Option(t.name, t.id)); });
+      // Tasks
       renderTasks();
-      // Populate PDF dropdown
       const pdfSel = document.getElementById('taskSelectPDF'); pdfSel.innerHTML = '';
-      tasks.forEach(task => pdfSel.append(new Option(task.title, task.id)));
+      const eventTasksSel = document.getElementById('eventTasks'); eventTasksSel.innerHTML = '';
+      tasks.forEach(task => { pdfSel.append(new Option(task.title, task.id)); eventTasksSel.append(new Option(task.title, task.id)); });
+      // Event teams select
+      const eventTeamsSel = document.getElementById('eventTeams'); eventTeamsSel.innerHTML = '';
+      teams.forEach(t => eventTeamsSel.append(new Option(t.name, t.id)));
+
+      // After-add editors
+      const eventTeamsEdit = document.getElementById('eventTeamsEdit'); eventTeamsEdit.innerHTML='';
+      const eventTasksEdit = document.getElementById('eventTasksEdit'); eventTasksEdit.innerHTML='';
+      teams.forEach(t => eventTeamsEdit.append(new Option(t.name, t.id)));
+      tasks.forEach(task => eventTasksEdit.append(new Option(task.title, task.id)));
+
+      // Events & logs & users
+      await loadEvents(); await loadLogs(); await loadUsers();
+
+      // Setup search (only once; harmless to re-bind)
+      setupSearch('searchTeams', 'eventTeams');
+      setupSearch('searchTasks', 'eventTasks');
+      setupSearch('searchTeamsEdit', 'eventTeamsEdit');
+      setupSearch('searchTasksEdit', 'eventTasksEdit');
     }
 
-    // Render paginated tasks
     function renderTasks() {
       const tbody = document.getElementById('taskTableBody'); tbody.innerHTML = '';
-      const total = tasks.length;
-      const pages = Math.max(Math.ceil(total / pageSize), 1);
+      const total = tasks.length, pages = Math.max(Math.ceil(total / pageSize), 1);
       currentPage = Math.min(Math.max(1, currentPage), pages);
       const start = (currentPage - 1) * pageSize;
       for (let i = start; i < Math.min(start + pageSize, total); i++) {
-        const task = tasks[i];
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${task.title}</td>
-          <td>
-            <button onclick="downloadSingleTaskPDF('${task.id}')">PDF</button>
-            <button onclick="deleteTask('${task.id}')">Slet</button>
-          </td>`;
+        const task = tasks[i]; const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${task.title}</td><td><button onclick="downloadSingleTaskPDF('${task.id}')">PDF</button> <button class="danger" onclick="deleteTask('${task.id}')">Slet</button></td>`;
         tbody.appendChild(tr);
       }
-      document.getElementById('pageInfo').innerText = `${currentPage} / ${pages}`;
+      const pageInfoEl = document.getElementById('pageInfo'); if (pageInfoEl) pageInfoEl.innerText = `${currentPage} / ${Math.max(Math.ceil(total / pageSize), 1)}`;
     }
+    function prevPage(){ currentPage--; renderTasks(); }
+    function nextPage(){ currentPage++; renderTasks(); }
 
-    function prevPage() { currentPage--; renderTasks(); }
-    function nextPage() { currentPage++; renderTasks(); }
-
-    // Delete a task after confirmation
-    async function deleteTask(taskId) {
-      if (!confirm('Er du sikker på at slette det?')) return;
-      await axios.delete(`/api/admin/tasks/${taskId}`);
-      loadState();
-    }
-
-    // Create teams batch
-    async function addTeams() {
-      const count = +document.getElementById('teamCount').value;
-      await axios.post('/api/admin/teams/create', { count });
-      loadState();
-    }
-
-    // Download PDF for all teams with unique QR
-    async function downloadTeamPDF() {
-      const res = await axios.get('/api/admin/state');
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      for (let i = 0; i < res.data.teams.length; i++) {
-        const t = res.data.teams[i];
-        if (i > 0) doc.addPage();
-        doc.setFontSize(24);
-        doc.text(t.name, 105, 20, { align: 'center' });
-        const qrUrl = `${location.origin}/join.html?teamId=${t.id}`;
-        const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrUrl)}`;
-        const imgData = await fetchImageData(qrApi);
-        doc.addImage(imgData, 'PNG', 55, 40, 100, 100);
-      }
-      doc.save('hold.pdf');
-    }
-
-    // Download PDF for one task with unique QR per answer
-    async function downloadSingleTaskPDF(taskId) {
-      const task = tasks.find(t => t.id === taskId);
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      for (let i = 0; i < task.options.length; i++) {
-        const opt = task.options[i];
-        if (i > 0) doc.addPage();
-        doc.setFontSize(18);
-        doc.text(task.title, 10, 20);
-        doc.text(`Svar: ${opt.text}`, 10, 30);
-        doc.text(`Point: ${opt.points}`, 10, 40);
-        const qrUrl = `${location.origin}/scan?taskId=${taskId}&optionIndex=${i}`;
-        const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrUrl)}`;
-        const imgData = await fetchImageData(qrApi);
-        doc.addImage(imgData, 'PNG', 10, 50, 80, 80);
-      }
-      doc.save(`opgave_${task.title}.pdf`);
-    }
-
-    // Download PDF for selected task
-    async function downloadTaskPDF() {
-      const taskId = document.getElementById('taskSelectPDF').value;
-      await downloadSingleTaskPDF(taskId);
-    }
-
-    // Reset hold: delete teams and records
-    async function resetTeams() {
-      await axios.post('/api/admin/teams/reset');
-      loadState();
-    }
-
-    // Reset event: reset scores and records only
-    async function resetEvent() {
-      await axios.post('/api/admin/reset');
-      loadState();
-    }
-
-    // Give bonus points
-    async function addBonus() {
-      const teamId = document.getElementById('bonusTeamSelect').value;
-      const extra = +document.getElementById('bonusPointsInput').value;
-      await axios.post('/api/admin/bonus', { teamId, extra });
-      loadState();
-    }
-
-    // Show task form
-    function showTaskForm() {
-      document.getElementById('taskForm').style.display = 'block';
-    }
-
+    // Tasks
+    function showTaskForm(){ document.getElementById('taskForm').style.display='block'; }
     let optIdx = 0;
-    function addTaskOpt() {
-      const c = document.getElementById('taskOpts');
-      c.insertAdjacentHTML('beforeend',
-        `<input data-text placeholder="Svar ${optIdx+1}" required>
-         <input data-points type="number" placeholder="Point" required><br>`);
-      optIdx++;
+    function addTaskOpt(){ const c = document.getElementById('taskOpts'); c.insertAdjacentHTML('beforeend', `<input data-text placeholder="Svar ${optIdx+1}" required> <input data-points type="number" placeholder="Point" required style="width:120px"><br>`); optIdx++; }
+    document.getElementById('taskForm').onsubmit = async e => { e.preventDefault(); const title = document.getElementById('taskTitle').value; const texts = Array.from(document.querySelectorAll('[data-text]')).map(x => x.value); const pts = Array.from(document.querySelectorAll('[data-points]')).map(x => +x.value); await axios.post('/api/tasks', { title, options: texts.map((t,i)=>({ text:t, points:pts[i] })) }); alert('Opgave gemt'); e.target.reset(); e.target.style.display='none'; optIdx=0; document.getElementById('taskOpts').innerHTML=''; loadState(); };
+    async function deleteTask(taskId){ if(!confirm('Er du sikker på at slette det?')) return; await axios.delete(`/api/admin/tasks/${taskId}`); loadState(); }
+
+    async function downloadSingleTaskPDF(taskId){ const task = tasks.find(t=>t.id===taskId); const { jsPDF } = window.jspdf; const doc = new jsPDF(); for (let i=0;i<task.options.length;i++){ const opt=task.options[i]; if(i>0) doc.addPage(); doc.setFontSize(18); doc.text(task.title,10,20); doc.text(`Svar: ${opt.text}`,10,30); doc.text(`Point: ${opt.points}`,10,40); const qrUrl = `${location.origin}/scan?taskId=${taskId}&optionIndex=${i}`; const imgData = await fetchImageData(`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrUrl)}`); doc.addImage(imgData,'PNG',10,50,80,80);} doc.save(`opgave_${task.title}.pdf`); }
+    async function downloadTaskPDF(){ const taskId = document.getElementById('taskSelectPDF').value; await downloadSingleTaskPDF(taskId); }
+
+    // Teams
+    async function addTeams(){ const count = +document.getElementById('teamCount').value; await axios.post('/api/admin/teams/create',{ count }); loadState(); }
+    async function downloadTeamPDF(){ const res = await axios.get('/api/admin/state'); const { jsPDF } = window.jspdf; const doc = new jsPDF(); for(let i=0;i<res.data.teams.length;i++){ const t=res.data.teams[i]; if(i>0) doc.addPage(); doc.setFontSize(24); doc.text(t.name,105,20,{align:'center'}); const qrUrl = `${location.origin}/join.html?teamId=${t.id}`; const imgData = await fetchImageData(`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrUrl)}`); doc.addImage(imgData,'PNG',55,40,100,100);} doc.save('hold.pdf'); }
+
+    // Events
+    async function createAdminEvent(){ const name=document.getElementById('eventName').value.trim(); const teamIds=Array.from(document.getElementById('eventTeams').selectedOptions).map(o=>o.value); const taskIds=Array.from(document.getElementById('eventTasks').selectedOptions).map(o=>o.value); if(!name||teamIds.length===0||taskIds.length===0){ alert('Udfyld navn og vælg mindst ét hold og én opgave.'); return; } await axios.post('/api/admin/events',{ name,teamIds,taskIds }); document.getElementById('eventName').value=''; Array.from(document.getElementById('eventTeams').options).forEach(o=>o.selected=false); Array.from(document.getElementById('eventTasks').options).forEach(o=>o.selected=false); await loadEvents(); alert('Event oprettet'); }
+    async function loadEvents(){ const r=await axios.get('/api/admin/events'); events=r.data.events||[]; const tbody=document.querySelector('#eventsTable tbody'); tbody.innerHTML=''; const sel=document.getElementById('eventSelectEdit'); sel.innerHTML=''; events.forEach(ev=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${ev.name}</td><td>${ev.teamIds.length}</td><td>${ev.taskIds.length}</td><td><button onclick="downloadEventTeamsPDF('${ev.id}')">Event Hold PDF</button> <button onclick="downloadEventTasksPDF('${ev.id}')">Event Opgave PDF</button></td>`; tbody.appendChild(tr); sel.append(new Option(ev.name, ev.id)); }); }
+    async function appendToEvent(){ const eventId=document.getElementById('eventSelectEdit').value; if(!eventId){ alert('Vælg et event'); return; } const teamIds=Array.from(document.getElementById('eventTeamsEdit').selectedOptions).map(o=>o.value); const taskIds=Array.from(document.getElementById('eventTasksEdit').selectedOptions).map(o=>o.value); if(teamIds.length===0 && taskIds.length===0){ alert('Vælg mindst ét hold eller én opgave'); return; } await axios.post(`/api/admin/events/${eventId}/append`,{ teamIds, taskIds }); Array.from(document.getElementById('eventTeamsEdit').options).forEach(o=>o.selected=false); Array.from(document.getElementById('eventTasksEdit').options).forEach(o=>o.selected=false); await loadEvents(); alert('Tilføjet til event'); }
+
+    async function downloadEventTeamsPDF(eventId){ const ev=events.find(e=>e.id===eventId); if(!ev) return; const { jsPDF } = window.jspdf; const doc=new jsPDF(); for(let i=0;i<ev.teamIds.length;i++){ const t=teams.find(x=>x.id===ev.teamIds[i]); if(!t) continue; if(i>0) doc.addPage(); doc.setFontSize(22); doc.text(`${ev.name} – ${t.name}`,105,18,{align:'center'}); const url=`${location.origin}/join.html?teamId=${t.id}&eventId=${ev.id}`; const img=await fetchImageData(`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`); doc.addImage(img,'PNG',55,30,100,100);} doc.save(`event_${eventId}_teams.pdf`); }
+
+    // Event Opgave PDF – 3 kolonner × 2 rækker pr side, tynd ramme
+    async function downloadEventTasksPDF(eventId){
+      const ev = events.find(e => e.id === eventId); if (!ev) return;
+      const eventTasks = tasks.filter(t => ev.taskIds.includes(t.id));
+      const { jsPDF } = window.jspdf; const doc = new jsPDF();
+
+      const cols = 3;
+      const cellW = 60;
+      const cellH = 64;
+      const colLefts = [10, 75, 140];
+      const topY = 30;
+      const rowStep = 70;
+      const qrSize = 45;
+      const labelPadX = 5;
+      const labelWidth = cellW - 10;
+      const borderPadY = 6;
+
+      for (let tIndex = 0; tIndex < eventTasks.length; tIndex++) {
+        const task = eventTasks[tIndex];
+        if (tIndex > 0) doc.addPage();
+
+        // Titel (spørgsmålet)
+        doc.setFontSize(18);
+        const titleLines = doc.splitTextToSize(task.title, 180);
+        doc.text(titleLines, 105, 15, { align: 'center' });
+
+        let idxInPage = 0;
+        for (let i = 0; i < task.options.length; i++) {
+          const rTest = Math.floor(idxInPage / cols);
+          const yTest = topY + rTest * rowStep;
+          if (idxInPage > 0 && (yTest + cellH + borderPadY) > 285) {
+            doc.addPage();
+            idxInPage = 0;
+            doc.setFontSize(14);
+            const cont = doc.splitTextToSize(`${task.title} (fortsat)`, 180);
+            doc.text(cont, 105, 15, { align: 'center' });
+          }
+
+          const r = Math.floor(idxInPage / cols);
+          const c = idxInPage % cols;
+          const cellX = colLefts[c];
+          const cellY = topY + r * rowStep;
+          const opt = task.options[i];
+
+          // ramme
+          doc.setDrawColor(180);
+          doc.setLineWidth(0.2);
+          doc.rect(cellX, cellY - borderPadY, cellW, cellH);
+
+          // tekst
+          doc.setFontSize(12);
+          const lines = doc.splitTextToSize(`Svar: ${opt.text}\nPoint: ${opt.points}`, labelWidth);
+          doc.text(lines, cellX + labelPadX, cellY);
+
+          // QR (unik for svarmulighed)
+          const url = `${location.origin}/scan?taskId=${task.id}&optionIndex=${i}`;
+          const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize*3}x${qrSize*3}&data=${encodeURIComponent(url)}`;
+          const imgData = await fetchImageData(qrApi);
+          doc.addImage(imgData, 'PNG', cellX + labelPadX, cellY + 12, qrSize, qrSize);
+
+          idxInPage++;
+        }
+      }
+      doc.save(`event_${eventId}_tasks.pdf`);
     }
 
-    // Handle form submit
-    document.getElementById('taskForm').onsubmit = async e => {
-      e.preventDefault();
-      const title = document.getElementById('taskTitle').value;
-      const texts = Array.from(document.querySelectorAll('[data-text]')).map(x => x.value);
-      const pts = Array.from(document.querySelectorAll('[data-points]')).map(x => +x.value);
-      await axios.post('/api/tasks', { title, options: texts.map((t,i) => ({ text: t, points: pts[i] })) });
-      alert('Opgave gemt');
-      document.getElementById('taskForm').reset();
-      document.getElementById('taskForm').style.display = 'none';
-      optIdx = 0;
-      document.getElementById('taskOpts').innerHTML = '';
-      loadState();
-    };
+    // Logs & Backup
+    async function loadLogs(){ const teamId=document.getElementById('logTeamFilter').value; const r=await axios.get('/api/admin/logs',{ params: teamId ? { teamId } : {} }); const tbody=document.querySelector('#logsTable tbody'); tbody.innerHTML=''; r.data.logs.forEach(l=>{ const dt=new Date(l.time); const tr=document.createElement('tr'); tr.innerHTML=`<td>${dt.toLocaleString()}</td><td>${l.message || ''}</td>`; tbody.appendChild(tr); }); }
+    async function backupDb(){ window.location='/api/admin/backup'; }
+    async function clearLogs(){ if(!confirm('Er du sikker på at du vil rydde loggen?')) return; await axios.post('/api/admin/logs/clear'); await loadLogs(); alert('Loggen er ryddet.'); }
 
-    // On load
+    // Control
+    async function resetTeams(){ if(!confirm('Slet alle hold og records?')) return; await axios.post('/api/admin/teams/reset'); loadState(); }
+    async function resetEvent(){ if(!confirm('Nulstil scores og records?')) return; await axios.post('/api/admin/reset'); loadState(); }
+    async function addBonus(){ const teamId=document.getElementById('bonusTeamSelect').value; const extra=+document.getElementById('bonusPointsInput').value; if (!teamId || !extra) { alert('Vælg hold og indtast antal bonuspoint'); return; } await axios.post('/api/admin/bonus',{ teamId, extra }); const teamName = (teams.find(t=>t.id===teamId)?.name) || 'Hold'; alert(`Bonus givet: ${extra} point til ${teamName}.`); loadState(); }
+
+    // Users
+    async function loadUsers(){ const r=await axios.get('/api/admin/users'); users=r.data.users||[]; const tbody=document.getElementById('usersTableBody'); tbody.innerHTML=''; users.forEach(u=>{ const tr=document.createElement('tr'); const dt=u.created?new Date(u.created).toLocaleString():''; tr.innerHTML=`<td>${u.username}</td><td>${dt}</td>`; tbody.appendChild(tr); }); }
+    async function addUser(){ const username=document.getElementById('newUserName').value.trim(); const password=document.getElementById('newUserPass').value; if(!username||!password){ alert('Udfyld brugernavn og adgangskode'); return; } try{ await axios.post('/api/admin/users',{ username, password }); document.getElementById('newUserName').value=''; document.getElementById('newUserPass').value=''; await loadUsers(); alert('Bruger oprettet'); } catch(e){ alert(e?.response?.data?.error||'Kunne ikke oprette bruger'); } }
+
+    // Boot
     window.onload = loadState;
   </script>
 </body>

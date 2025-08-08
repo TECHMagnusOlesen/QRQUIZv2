@@ -2,106 +2,112 @@
 <html lang="da">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Points</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
   <style>
-    /* Mobile-first styling */
     body {
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-                   Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-      background-color: #eef2f5;
-      color: #333;
-    }
+      background:#f3f4f6;
+      color:#111827;
+      font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Helvetica,Arial,sans-serif;
+      margin:0;
 
-    .score-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
-      margin: 0 auto;
-      max-width: 400px;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
+      /* Mobilvenligt layout */
+      min-height:100dvh; /* undgår iOS 100vh-issues */
+      display:flex; align-items:center; justify-content:center;
 
-    .score-container h1 {
-      font-size: 2rem;
-      margin-bottom: 0.5em;
-    }
+      /* Behagelig padding + safe areas */
+      padding: clamp(12px, 4vw, 24px);
+      padding-left: max(16px, env(safe-area-inset-left));
+      padding-right: max(16px, env(safe-area-inset-right));
+      padding-top: max(16px, env(safe-area-inset-top));
+      padding-bottom: max(16px, env(safe-area-inset-bottom));
 
-    .score-container p {
-      font-size: 1.2rem;
-      margin: 0.3em 0;
-      text-align: center;
+      -webkit-text-size-adjust: 100%;
     }
-
-    #feedback {
-      margin-top: 1em;
-      font-size: 1.1rem;
-      font-weight: 500;
+    .card {
+      width:100%; max-width:560px;
+      background:#fff; border:1px solid #e5e7eb; border-radius:16px;
+      box-shadow:0 8px 30px rgba(0,0,0,.06); padding:24px;
     }
-
-    /* Feedback farver */
-    #feedback.green   { color: #2e7d32; }
-    #feedback.red     { color: #c62828; }
-    #feedback.orange  { color: #ef6c00; }
-
-    /* Just lidt ekstra padding i bunden hvis keyboards vises */
-    @media (max-width: 480px) {
-      .score-container {
-        padding-bottom: 40px;
-      }
-    }
+    h1 { margin:0 0 6px 0; font-size:24px; }
+    p { margin:.4em 0; word-break:break-word; }
+    .muted { color:#6b7280; }
+    .feedback { margin-top:12px; font-size:1.1rem; font-weight:600; }
+    .ok { color:#059669; }
+    .warn { color:#b45309; }
+    .err { color:#dc2626; }
+    .center { text-align:center; }
+    .big-emoji { font-size:42px; line-height:1; margin-bottom:8px; }
+    .grid { display:grid; gap:6px; }
   </style>
 </head>
 <body>
-  <div class="score-container">
+
+  <!-- STATE: JOINED -->
+  <div id="state-joined" class="card" style="display:none">
     <h1>Velkommen!</h1>
-    <p>Du er på hold: <strong id="teamName">–</strong></p>
-    <p>Du har <strong id="score">0</strong> point.</p>
-    <p id="feedback"></p>
+    <div class="grid">
+      <p>Du er på hold: <strong id="teamName">–</strong></p>
+      <p>Du har <strong id="score">0</strong> point.</p>
+      <p id="feedback" class="feedback"></p>
+    </div>
+  </div>
+
+  <!-- STATE: NOT JOINED -->
+  <div id="state-notjoined" class="card center" style="display:none">
+    <div class="big-emoji">🏁</div>
+    <h1>Du er ikke tilføjet på et hold</h1>
+    <p class="muted">Scan en <strong>hold-QR-kode</strong> for at starte.</p>
+    <p class="muted">Når du har scannet, bliver du automatisk tilknyttet et hold og kan samle point.</p>
   </div>
 
   <script>
-    async function loadScoreAndName(points, already) {
-      try {
-        const res = await axios.get('/api/score');
-        document.getElementById('score').innerText = res.data.score;
-        document.getElementById('teamName').innerText = res.data.name;
-      } catch (e) {
-        console.error('Fejl ved hentning af score:', e);
-      }
+    async function loadState() {
+      const params = new URLSearchParams(window.location.search);
+      const already    = params.has('already');
+      const notInEvent = params.has('notinEvent');
+      const pointsRaw  = params.get('points');
+      const points     = pointsRaw !== null ? parseInt(pointsRaw, 10) : null;
 
+      const joinedEl = document.getElementById('state-joined');
+      const notJoinedEl = document.getElementById('state-notjoined');
       const fb = document.getElementById('feedback');
-      if (already) {
-        fb.innerText = 'Du har allerede svaret på denne opgave.';
-        fb.className = 'orange';
-      } else if (points !== null) {
-        if (points > 0) {
-          fb.innerText = `Det er rigtigt! Du fik ${points} point.`;
-          fb.className = 'green';
+
+      joinedEl.style.display = 'none';
+      notJoinedEl.style.display = 'none';
+
+      try {
+        const res = await axios.get('/api/score'); // { score, name }
+        document.getElementById('teamName').innerText = res.data.name || '–';
+        document.getElementById('score').innerText = res.data.score ?? 0;
+        joinedEl.style.display = 'block';
+
+        fb.className = 'feedback';
+        if (already) {
+          fb.textContent = 'Du har allerede svaret på denne opgave.';
+          fb.classList.add('warn');
+        } else if (notInEvent) {
+          fb.textContent = 'Denne opgave er ikke en del af det aktuelle event.';
+          fb.classList.add('warn');
+        } else if (points !== null) {
+          if (points > 0) {
+            fb.textContent = `Det er rigtigt! Du fik ${points} point.`;
+            fb.classList.add('ok');
+          } else {
+            fb.textContent = 'Det var forkert, ingen point desværre…';
+            fb.classList.add('err');
+          }
         } else {
-          fb.innerText = 'Det var forkert, ingen point desværre…';
-          fb.className = 'red';
+          fb.textContent = '';
         }
+      } catch (e) {
+        notJoinedEl.style.display = 'block';
       }
     }
 
-    window.onload = () => {
-      const params = new URLSearchParams(window.location.search);
-      const already = params.has('already');
-      const pointsParam = params.get('points');
-      const points = pointsParam !== null ? parseInt(pointsParam, 10) : null;
-      loadScoreAndName(points, already);
-    };
+    window.onload = loadState;
   </script>
 </body>
 </html>

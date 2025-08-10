@@ -34,71 +34,6 @@
       "id": "42378feb-3658-411d-9941-cc7de9279bc0",
       "name": "Hold 7",
       "score": 0
-    },
-    {
-      "id": "63f920b4-df28-4416-b65c-00d307e82486",
-      "name": "Hold 8",
-      "score": 0
-    },
-    {
-      "id": "a30f061e-0bd2-4b05-b4a3-4b8ddca66361",
-      "name": "Hold 9",
-      "score": 0
-    },
-    {
-      "id": "b7b41f29-13d4-4550-b677-3d1279c666db",
-      "name": "Hold 10",
-      "score": 0
-    },
-    {
-      "id": "6f4182f7-a89b-4eb1-93c6-019ebe795d9e",
-      "name": "Hold 11",
-      "score": 0
-    },
-    {
-      "id": "1640310b-1851-4114-8a50-854806e47e3d",
-      "name": "Hold 12",
-      "score": 0
-    },
-    {
-      "id": "d1b6229b-3639-46c1-bdf7-ada6e82fcf3d",
-      "name": "Hold 13",
-      "score": 0
-    },
-    {
-      "id": "3b5eb56d-253e-49b3-a1c5-e3cb8c4de81e",
-      "name": "Hold 14",
-      "score": 0
-    },
-    {
-      "id": "6294aa64-8e01-47e3-b81d-d9267f2d1cd9",
-      "name": "Hold 15",
-      "score": 0
-    },
-    {
-      "id": "db3c0f08-844d-4e48-b4ae-bf644b18a275",
-      "name": "Hold 16",
-      "score": 0
-    },
-    {
-      "id": "d4d3cc25-fa45-41d4-a3ea-bbb6c4bc19ba",
-      "name": "Hold 17",
-      "score": 0
-    },
-    {
-      "id": "fc4afa0b-e60c-4196-bc84-9b62b4a567fc",
-      "name": "Hold 18",
-      "score": 0
-    },
-    {
-      "id": "164f3063-9082-4c7f-b71f-ded07cd4fbe5",
-      "name": "Hold 19",
-      "score": 0
-    },
-    {
-      "id": "c2af055a-5f53-48f2-8568-518dfd867d8c",
-      "name": "Hold 20",
-      "score": 0
     }
   ],
   "tasks": [
@@ -643,13 +578,6 @@
       "salt": "ab13ac6d3ff2596903685f160649d936",
       "hash": "5df46d8a0e6e9c6fd1d3fd7f06f551ecb742365723d620c18e4847a8f3f5364854f4a4f5e5a3682e96eeb446e7765433ac63244ce4c47d4cc14313ede4193cb5",
       "created": 1754692496650
-    },
-    {
-      "id": "fd22144b-24a7-45f4-91d3-b814837d8fc6",
-      "username": "chch",
-      "salt": "ac628a42eae7cc847280eb67a361ec4b",
-      "hash": "0db6a52ff6f9075a7267653164c0c7a94b69f8b5068cf223dc0a557ed232e058ed986aedcd61def5cd173fa9a31cf8c87ef776830302c7499da97c7c541e8454",
-      "created": 1754694656971
     }
   ],
   "events": [
@@ -699,5 +627,20 @@
       "created": 1754692814743
     }
   ],
-  "logs": []
+  "logs": [
+    {
+      "id": "254b6000-4650-4efa-85cd-bfd195681f89",
+      "type": "join",
+      "teamId": "b9af7e00-9974-4ef6-8229-ec9eea171ae8",
+      "eventId": "ff8bca4e-f7c1-4a97-bfb7-74015ee7c4c5",
+      "time": 1754693805341
+    },
+    {
+      "id": "ac4ff742-b711-4c2d-bd52-95731969b0d5",
+      "type": "join",
+      "teamId": "b9af7e00-9974-4ef6-8229-ec9eea171ae8",
+      "eventId": "ff8bca4e-f7c1-4a97-bfb7-74015ee7c4c5",
+      "time": 1754694086744
+    }
+  ]
 }

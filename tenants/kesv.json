@@ -1,0 +1,113 @@
+{
+  "teams": [
+    {
+      "id": "e95da9ee-e89e-4e4f-ab17-762ab781d1f6",
+      "name": "Hold 1",
+      "score": 0
+    },
+    {
+      "id": "ebcdb656-9d64-4393-9f51-fc7887631091",
+      "name": "Hold 2",
+      "score": 0
+    },
+    {
+      "id": "f16f8e54-42d7-4c4e-8885-3212ec4000be",
+      "name": "Hold 3",
+      "score": 0
+    },
+    {
+      "id": "36c0fc3e-a75e-42ef-a2ec-ecaa533f4b74",
+      "name": "Hold 4",
+      "score": 0
+    },
+    {
+      "id": "780e8bbc-1282-4795-b5d7-d13712a5ee91",
+      "name": "Hold 5",
+      "score": 0
+    }
+  ],
+  "tasks": [
+    {
+      "id": "091ed31f-018e-4cf6-9a64-5e648b05d966",
+      "title": "Test 1",
+      "options": [
+        {
+          "text": "sv1",
+          "points": 10
+        },
+        {
+          "text": "sv2 ",
+          "points": 0
+        },
+        {
+          "text": "sv3",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "930a009c-78ef-496b-aa6c-2c0005a14eeb",
+      "title": "Test 2",
+      "options": [
+        {
+          "text": "svv1",
+          "points": 10
+        },
+        {
+          "text": "svv2",
+          "points": 0
+        },
+        {
+          "text": "svv3",
+          "points": 0
+        }
+      ]
+    }
+  ],
+  "records": [],
+  "events": [
+    {
+      "id": "9427c80e-87dc-4bab-8456-eb7cb888fa7a",
+      "name": "testevent",
+      "teamIds": [
+        "e95da9ee-e89e-4e4f-ab17-762ab781d1f6",
+        "ebcdb656-9d64-4393-9f51-fc7887631091",
+        "f16f8e54-42d7-4c4e-8885-3212ec4000be"
+      ],
+      "taskIds": [
+        "091ed31f-018e-4cf6-9a64-5e648b05d966",
+        "930a009c-78ef-496b-aa6c-2c0005a14eeb"
+      ],
+      "created": 1754842704772
+    }
+  ],
+  "logs": [
+    {
+      "id": "fb67f5d4-672a-4cab-9a2f-ccd60fd78c3e",
+      "type": "join",
+      "teamId": "e95da9ee-e89e-4e4f-ab17-762ab781d1f6",
+      "eventId": "9427c80e-87dc-4bab-8456-eb7cb888fa7a",
+      "time": 1754842814849
+    },
+    {
+      "id": "af29ddf3-991d-4562-9f49-92997ec0e664",
+      "type": "answer",
+      "teamId": "e95da9ee-e89e-4e4f-ab17-762ab781d1f6",
+      "taskId": "091ed31f-018e-4cf6-9a64-5e648b05d966",
+      "optionIndex": 2,
+      "points": 0,
+      "eventId": "9427c80e-87dc-4bab-8456-eb7cb888fa7a",
+      "time": 1754842829122
+    },
+    {
+      "id": "8af3c055-6be7-487a-8a6c-2fd4c864cb20",
+      "type": "answer",
+      "teamId": "e95da9ee-e89e-4e4f-ab17-762ab781d1f6",
+      "taskId": "930a009c-78ef-496b-aa6c-2c0005a14eeb",
+      "optionIndex": 0,
+      "points": 10,
+      "eventId": "9427c80e-87dc-4bab-8456-eb7cb888fa7a",
+      "time": 1754842838677
+    }
+  ]
+}

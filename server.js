@@ -203,7 +203,7 @@ app.get('/api/score', (req, res) => {
   res.json({ score: team.score, name: team.name });
 });
 
-// Event-name for joined.html
+// NEW: Event-name for joined.html
 app.get('/api/event', (req, res) => {
   try {
     const tenant = resolveTenantFromReq(req);
@@ -220,12 +220,6 @@ app.get('/api/event', (req, res) => {
   } catch {
     res.json({ event: null });
   }
-});
-
-// NY: Giv klienten nuværende tenant (bruges som fallback i admin.html)
-app.get('/api/tenant', (req, res) => {
-  const tenant = (req.cookies.adminUser || req.cookies.tenant || '').toString().trim() || null;
-  res.json({ tenant });
 });
 
 // ---------- Admin middlewares ----------
@@ -251,7 +245,7 @@ function withTenantDb(req, res, next) {
   }
 }
 
-// ---------- Admin Info (bevidst uafhængig af withTenantDb) ----------
+// ---------- Admin Info ----------
 app.get('/api/admin/me', adminApi, (req, res) => {
   const user = coreDb.get('users').find({ username: req.cookies.adminUser }).value();
   if (!user) return res.status(404).json({ error: 'Bruger ikke fundet' });

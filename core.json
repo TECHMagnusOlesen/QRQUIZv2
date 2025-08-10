@@ -1,0 +1,20 @@
+{
+  "users": [
+    {
+      "id": "31b4b6c8-0296-41cb-8e31-4e85a93f0bad",
+      "username": "mago",
+      "salt": "d743f9478d3487c20b44b42e51cc0f60",
+      "hash": "7e8e789dc8bef2ed6b058d9c2b22edfca60ebc00302925eb8743eab59d58aaa409eb4dcd3a83191879197fbb7ba997c9ec59f2dabb9bcaa08dcb729b6788343b",
+      "role": "owner",
+      "created": 1754842230720
+    },
+    {
+      "id": "0f7797d2-ce11-4a74-adda-b63896d381c2",
+      "username": "kesv",
+      "salt": "a18cf7f89073b0c5518967429244b5c4",
+      "hash": "5ca7e65bbe2c62be43a024b10cce9ed2c8ea6955f2e52b56c1b794a96bb4c3c3db74caf3f81f6bca0b577e25eab41156bb7706f4f0da32e7708fe766c804a1ec",
+      "role": "admin",
+      "created": 1754842253870
+    }
+  ]
+}

@@ -3,13 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <title>Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>axios.defaults.withCredentials = true;</script>
   <style>
-    body { background:#f3f4f6; color:#111827; font:14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Helvetica, Arial, sans-serif; margin:0; }
-    .tabs { display:flex; gap:8px; padding:12px 16px; border-bottom:1px solid #e5e7eb; background:#fff; position:sticky; top:0; z-index:10; }
+    body { background:#f3f4f6; color:#111827; font:14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Helvetica,Arial,sans-serif; margin:0; }
+    .header{
+      position:sticky; top:0; z-index:30;
+      background:#1d4ed8; color:#fff; padding:12px 16px; font-weight:700; letter-spacing:.3px;
+      box-shadow:0 1px 2px rgba(0,0,0,.08);
+    }
+    .tabs { display:flex; gap:8px; padding:12px 16px; border-bottom:1px solid #e5e7eb; background:#fff; position:sticky; top:52px; z-index:20; }
     .tab-spacer{flex:1}
     .tab { appearance:none; border:1px solid #e5e7eb; background:#f9fafb; color:#1f2937; padding:8px 12px; border-radius:8px; cursor:pointer }
     .tab.active { background:#e8f0fe; border-color:#93c5fd; color:#1d4ed8; }
@@ -32,14 +38,27 @@
     button.danger { border-color:#dc2626; background:#dc2626; }
     small.muted { color:#6b7280; }
 
-    .event-grid { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:16px; }
-    @media (max-width: 1024px){ .event-grid { grid-template-columns: 1fr; } }
+    /* --- FIX: bedre grid og sizing i Events --- */
+    *, *::before, *::after { box-sizing: border-box; } /* undgå overflow fra padding/border */
+    .event-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr)); /* 3 lige kolonner uden overflow */
+      gap: 16px;
+    }
+    /* inde i hver kolonne stakker vi pænt lodret */
+    .event-grid > div { display:flex; flex-direction:column; gap:8px; }
+    /* inputs/selects udfylder kolonnen uden at skubbe */
+    .event-grid input, .event-grid select { width:100%; }
 
+    @media (max-width: 1024px){ .event-grid { grid-template-columns: 1fr; } }
     .input-row { display:flex; gap:8px; align-items:center; margin:6px 0; }
     .w100 { width:100% }
+    .hide { display:none !important; }
   </style>
 </head>
 <body>
+  <div class="header">QRQUIZ V2</div>
+
   <div class="tabs">
     <button class="tab active" data-tab="teams">Hold</button>
     <button class="tab" data-tab="tasks">Opgaver</button>
@@ -47,7 +66,7 @@
     <button class="tab" data-tab="logs">Logs & Backup</button>
     <button class="tab" data-tab="control">Kontrol</button>
     <span class="tab-spacer"></span>
-    <button class="tab" data-tab="users">Brugere</button>
+    <button id="tab-master-btn" class="tab hide" data-tab="master">Master</button>
   </div>
 
   <div class="tabpages">
@@ -107,23 +126,28 @@
     <section id="tab-events" class="tabpage">
       <div class="panel">
         <h2>Events</h2>
+
+        <!-- FIX: renere kolonne-layout uden overlap -->
         <div class="event-grid">
           <div>
-            <label>Event navn</label><br>
-            <input id="eventName" placeholder="Event navn">
-            <div class="input-row"><small class="muted">Tip: Hold <b>Shift</b> nede for at vælge en sammenhængende række, og <b>Ctrl</b>/<b>Cmd</b> for at vælge enkelte.</small></div>
+            <label>Event navn</label>
+            <input id="eventName" class="w100" placeholder="Event navn">
+            <small class="muted">Tip: Hold <b>Shift</b> for rækkevalg og <b>Ctrl</b>/<b>Cmd</b> for enkelte valg.</small>
           </div>
+
           <div>
             <label>Hold i event</label>
-            <div class="input-row"><input id="searchTeams" class="w100" placeholder="Søg i hold…"></div>
-            <select id="eventTeams" multiple size="8" style="min-width:220px; width:100%"></select>
+            <input id="searchTeams" class="w100" placeholder="Søg i hold…">
+            <select id="eventTeams" multiple size="8" style="min-height:220px"></select>
           </div>
+
           <div>
             <label>Opgaver i event</label>
-            <div class="input-row"><input id="searchTasks" class="w100" placeholder="Søg i opgaver…"></div>
-            <select id="eventTasks" multiple size="8" style="min-width:260px; width:100%"></select>
+            <input id="searchTasks" class="w100" placeholder="Søg i opgaver…">
+            <select id="eventTasks" multiple size="8" style="min-height:220px"></select>
           </div>
         </div>
+
         <div class="row" style="margin-top:12px">
           <button onclick="createAdminEvent()">Opret Event</button>
         </div>
@@ -144,13 +168,13 @@
         <div class="event-grid" style="margin-top:10px">
           <div>
             <label>Tilføj hold</label>
-            <div class="input-row"><input id="searchTeamsEdit" class="w100" placeholder="Søg i hold…"></div>
-            <select id="eventTeamsEdit" multiple size="8" style="min-width:220px; width:100%"></select>
+            <input id="searchTeamsEdit" class="w100" placeholder="Søg i hold…">
+            <select id="eventTeamsEdit" multiple size="8" style="min-height:220px"></select>
           </div>
           <div>
             <label>Tilføj opgaver</label>
-            <div class="input-row"><input id="searchTasksEdit" class="w100" placeholder="Søg i opgaver…"></div>
-            <select id="eventTasksEdit" multiple size="8" style="min-width:260px; width:100%"></select>
+            <input id="searchTasksEdit" class="w100" placeholder="Søg i opgaver…">
+            <select id="eventTasksEdit" multiple size="8" style="min-height:220px"></select>
           </div>
           <div style="align-self:end">
             <button onclick="appendToEvent()">Tilføj til Event</button>
@@ -164,7 +188,7 @@
       <div class="panel">
         <h2>Backup & Logs</h2>
         <div class="row">
-          <button onclick="backupDb()">Download db.json backup</button>
+          <button onclick="backupDb()">Download db.json (din)</button>
           <div class="spacer"></div>
           <label for="logTeamFilter">Filtrer på hold:</label>
           <select id="logTeamFilter"></select>
@@ -173,11 +197,18 @@
         </div>
         <div class="table-wrap" style="margin-top:10px; max-height:320px; overflow:auto">
           <table id="logsTable" style="min-width:700px;">
-            <thead>
-              <tr><th>Tid</th><th>Beskrivelse</th></tr>
-            </thead>
+            <thead><tr><th>Tid</th><th>Beskrivelse</th></tr></thead>
             <tbody></tbody>
           </table>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:12px">
+        <h2>QR base URL</h2>
+        <div class="row">
+          <input id="qrBaseInput" class="w100" placeholder="https://din-app.onrender.com">
+          <button onclick="saveQrBase()">Gem</button>
+          <small class="muted">Bruges når PDF-QR’er genereres. Standard er sidens origin.</small>
         </div>
       </div>
     </section>
@@ -198,18 +229,22 @@
       </div>
     </section>
 
-    <!-- USERS -->
-    <section id="tab-users" class="tabpage">
+    <!-- MASTER (kun owner) -->
+    <section id="tab-master" class="tabpage">
       <div class="panel">
-        <h2>Brugere</h2>
+        <h2>Master — Brugere & Backups</h2>
         <div class="row">
           <input id="newUserName" placeholder="Brugernavn">
           <input id="newUserPass" type="password" placeholder="Adgangskode">
-          <button onclick="addUser()">Tilføj bruger</button>
+          <select id="newUserRole">
+            <option value="admin">admin</option>
+            <option value="owner">owner</option>
+          </select>
+          <button onclick="masterAddUser()">Opret bruger</button>
         </div>
         <div class="table-wrap" style="margin-top:10px">
           <table>
-            <thead><tr><th>Bruger</th><th>Oprettet</th></tr></thead>
+            <thead><tr><th>Bruger</th><th>Rolle</th><th>Oprettet</th><th>Backup</th></tr></thead>
             <tbody id="usersTableBody"></tbody>
           </table>
         </div>
@@ -226,7 +261,7 @@
       events: document.getElementById('tab-events'),
       logs: document.getElementById('tab-logs'),
       control: document.getElementById('tab-control'),
-      users: document.getElementById('tab-users'),
+      master: document.getElementById('tab-master'),
     };
     tabButtons.forEach(btn => btn.addEventListener('click', () => {
       tabButtons.forEach(b => b.classList.remove('active'));
@@ -234,19 +269,36 @@
       btn.classList.add('active'); tabPages[btn.dataset.tab].classList.add('active');
     }));
 
-    // Data/state
+    // Global state
     for (let i = 1; i <= 20; i++) document.getElementById('teamCount').append(new Option(i, i));
-    let tasks = [], teams = [], events = [], users = [];
+    let tasks = [], teams = [], events = [];
     let currentPage = 1, pageSize = 10;
+    let TENANT = ''; let ROLE = 'admin';
 
-    async function fetchImageData(url) { const res = await fetch(url); const blob = await res.blob(); return new Promise(r => { const fr = new FileReader(); fr.onloadend=()=>r(fr.result); fr.readAsDataURL(blob); }); }
+    // QR base
+    let QR_BASE = localStorage.getItem('qrBase') || location.origin;
+    function getBase(){ return (QR_BASE || location.origin).replace(/\/+$/,''); }
+    function saveQrBase(){
+      const el = document.getElementById('qrBaseInput');
+      const v = (el?.value || '').trim();
+      if (!v) { alert('Indtast en gyldig base-URL'); return; }
+      localStorage.setItem('qrBase', v);
+      QR_BASE = v;
+      alert('QR base gemt.');
+    }
+    window.addEventListener('load', () => {
+      const el = document.getElementById('qrBaseInput');
+      if (el) el.value = QR_BASE;
+    });
 
-    // --- search helpers ---
+    // helpers
+    async function fetchImageData(url) {
+      const res = await fetch(url); const blob = await res.blob();
+      return new Promise(r => { const fr = new FileReader(); fr.onloadend=()=>r(fr.result); fr.readAsDataURL(blob); });
+    }
     function filterSelect(selectEl, query) {
       const q = query.trim().toLowerCase();
-      Array.from(selectEl.options).forEach(opt => {
-        opt.hidden = q && !opt.text.toLowerCase().includes(q);
-      });
+      Array.from(selectEl.options).forEach(opt => { opt.hidden = q && !opt.text.toLowerCase().includes(q); });
     }
     function setupSearch(inputId, selectId) {
       const input = document.getElementById(inputId);
@@ -254,19 +306,40 @@
       input.addEventListener('input', () => filterSelect(select, input.value));
     }
 
+    // Boot
+    async function boot() {
+      const me = await axios.get('/api/admin/me');
+      TENANT = me.data.username; ROLE = me.data.role || 'admin';
+      if (ROLE === 'owner') document.getElementById('tab-master-btn').classList.remove('hide');
+
+      await loadState();
+      if (ROLE === 'owner') await loadUsersMaster();
+
+      setupSearch('searchTeams', 'eventTeams');
+      setupSearch('searchTasks', 'eventTasks');
+      setupSearch('searchTeamsEdit', 'eventTeamsEdit');
+      setupSearch('searchTasksEdit', 'eventTasksEdit');
+    }
+
     async function loadState() {
       const res = await axios.get('/api/admin/state'); teams = res.data.teams; tasks = res.data.tasks;
+
       // Teams
       const teamBody = document.getElementById('teamTableBody'); teamBody.innerHTML = '';
       const bonusSel = document.getElementById('bonusTeamSelect'); bonusSel.innerHTML = '';
       const logFilter = document.getElementById('logTeamFilter'); logFilter.innerHTML = '<option value="">Alle</option>';
-      teams.forEach(t => { const tr = document.createElement('tr'); tr.innerHTML = `<td>${t.name}</td><td>${t.score}</td>`; teamBody.appendChild(tr); bonusSel.append(new Option(t.name, t.id)); logFilter.append(new Option(t.name, t.id)); });
+      teams.forEach(t => {
+        const tr = document.createElement('tr'); tr.innerHTML = `<td>${t.name}</td><td>${t.score}</td>`; teamBody.appendChild(tr);
+        bonusSel.append(new Option(t.name, t.id)); logFilter.append(new Option(t.name, t.id));
+      });
+
       // Tasks
       renderTasks();
       const pdfSel = document.getElementById('taskSelectPDF'); pdfSel.innerHTML = '';
       const eventTasksSel = document.getElementById('eventTasks'); eventTasksSel.innerHTML = '';
       tasks.forEach(task => { pdfSel.append(new Option(task.title, task.id)); eventTasksSel.append(new Option(task.title, task.id)); });
-      // Event teams select
+
+      // Event teams select(er)
       const eventTeamsSel = document.getElementById('eventTeams'); eventTeamsSel.innerHTML = '';
       teams.forEach(t => eventTeamsSel.append(new Option(t.name, t.id)));
 
@@ -276,14 +349,7 @@
       teams.forEach(t => eventTeamsEdit.append(new Option(t.name, t.id)));
       tasks.forEach(task => eventTasksEdit.append(new Option(task.title, task.id)));
 
-      // Events & logs & users
-      await loadEvents(); await loadLogs(); await loadUsers();
-
-      // Setup search (only once; harmless to re-bind)
-      setupSearch('searchTeams', 'eventTeams');
-      setupSearch('searchTasks', 'eventTasks');
-      setupSearch('searchTeamsEdit', 'eventTeamsEdit');
-      setupSearch('searchTasksEdit', 'eventTasksEdit');
+      await loadEvents(); await loadLogs();
     }
 
     function renderTasks() {
@@ -293,10 +359,15 @@
       const start = (currentPage - 1) * pageSize;
       for (let i = start; i < Math.min(start + pageSize, total); i++) {
         const task = tasks[i]; const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${task.title}</td><td><button onclick="downloadSingleTaskPDF('${task.id}')">PDF</button> <button class="danger" onclick="deleteTask('${task.id}')">Slet</button></td>`;
+        tr.innerHTML = `<td>${task.title}</td>
+                        <td>
+                          <button onclick="downloadSingleTaskPDF('${task.id}')">PDF</button>
+                          <button class="danger" onclick="deleteTask('${task.id}')">Slet</button>
+                        </td>`;
         tbody.appendChild(tr);
       }
-      const pageInfoEl = document.getElementById('pageInfo'); if (pageInfoEl) pageInfoEl.innerText = `${currentPage} / ${Math.max(Math.ceil(total / pageSize), 1)}`;
+      const pageInfoEl = document.getElementById('pageInfo');
+      if (pageInfoEl) pageInfoEl.innerText = `${currentPage} / ${Math.max(Math.ceil(total / pageSize), 1)}`;
     }
     function prevPage(){ currentPage--; renderTasks(); }
     function nextPage(){ currentPage++; renderTasks(); }
@@ -304,24 +375,126 @@
     // Tasks
     function showTaskForm(){ document.getElementById('taskForm').style.display='block'; }
     let optIdx = 0;
-    function addTaskOpt(){ const c = document.getElementById('taskOpts'); c.insertAdjacentHTML('beforeend', `<input data-text placeholder="Svar ${optIdx+1}" required> <input data-points type="number" placeholder="Point" required style="width:120px"><br>`); optIdx++; }
-    document.getElementById('taskForm').onsubmit = async e => { e.preventDefault(); const title = document.getElementById('taskTitle').value; const texts = Array.from(document.querySelectorAll('[data-text]')).map(x => x.value); const pts = Array.from(document.querySelectorAll('[data-points]')).map(x => +x.value); await axios.post('/api/tasks', { title, options: texts.map((t,i)=>({ text:t, points:pts[i] })) }); alert('Opgave gemt'); e.target.reset(); e.target.style.display='none'; optIdx=0; document.getElementById('taskOpts').innerHTML=''; loadState(); };
-    async function deleteTask(taskId){ if(!confirm('Er du sikker på at slette det?')) return; await axios.delete(`/api/admin/tasks/${taskId}`); loadState(); }
+    function addTaskOpt(){
+      const c = document.getElementById('taskOpts');
+      c.insertAdjacentHTML('beforeend',
+        `<input data-text placeholder="Svar ${optIdx+1}" required>
+         <input data-points type="number" placeholder="Point" required style="width:120px"><br>`);
+      optIdx++;
+    }
+    document.getElementById('taskForm').onsubmit = async e => {
+      e.preventDefault();
+      const title = document.getElementById('taskTitle').value;
+      const texts = Array.from(document.querySelectorAll('[data-text]')).map(x => x.value);
+      const pts = Array.from(document.querySelectorAll('[data-points]')).map(x => +x.value);
+      await axios.post('/api/admin/tasks', { title, options: texts.map((t,i)=>({ text:t, points:pts[i] })) });
+      alert('Opgave gemt');
+      e.target.reset(); e.target.style.display='none';
+      optIdx=0; document.getElementById('taskOpts').innerHTML='';
+      loadState();
+    };
+    async function deleteTask(taskId){
+      if(!confirm('Er du sikker på at slette det?')) return;
+      await axios.delete(`/api/admin/tasks/${taskId}`);
+      loadState();
+    }
 
-    async function downloadSingleTaskPDF(taskId){ const task = tasks.find(t=>t.id===taskId); const { jsPDF } = window.jspdf; const doc = new jsPDF(); for (let i=0;i<task.options.length;i++){ const opt=task.options[i]; if(i>0) doc.addPage(); doc.setFontSize(18); doc.text(task.title,10,20); doc.text(`Svar: ${opt.text}`,10,30); doc.text(`Point: ${opt.points}`,10,40); const qrUrl = `${location.origin}/scan?taskId=${taskId}&optionIndex=${i}`; const imgData = await fetchImageData(`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrUrl)}`); doc.addImage(imgData,'PNG',10,50,80,80);} doc.save(`opgave_${task.title}.pdf`); }
-    async function downloadTaskPDF(){ const taskId = document.getElementById('taskSelectPDF').value; await downloadSingleTaskPDF(taskId); }
+    async function downloadSingleTaskPDF(taskId){
+      const task = tasks.find(t=>t.id===taskId);
+      const { jsPDF } = window.jspdf; const doc = new jsPDF();
+      for (let i=0;i<task.options.length;i++){
+        const opt=task.options[i];
+        if(i>0) doc.addPage();
+        doc.setFontSize(18);
+        doc.text(task.title,10,20);
+        doc.text(`Svar: ${opt.text}`,10,30);
+        doc.text(`Point: ${opt.points}`,10,40);
+        const qrUrl = `${getBase()}/scan?t=${encodeURIComponent(TENANT)}&taskId=${taskId}&optionIndex=${i}`;
+        const imgData = await fetchImageData(`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrUrl)}`);
+        doc.addImage(imgData,'PNG',10,50,80,80);
+      }
+      doc.save(`opgave_${task.title}.pdf`);
+    }
+    async function downloadTaskPDF(){
+      const taskId = document.getElementById('taskSelectPDF').value;
+      await downloadSingleTaskPDF(taskId);
+    }
 
     // Teams
     async function addTeams(){ const count = +document.getElementById('teamCount').value; await axios.post('/api/admin/teams/create',{ count }); loadState(); }
-    async function downloadTeamPDF(){ const res = await axios.get('/api/admin/state'); const { jsPDF } = window.jspdf; const doc = new jsPDF(); for(let i=0;i<res.data.teams.length;i++){ const t=res.data.teams[i]; if(i>0) doc.addPage(); doc.setFontSize(24); doc.text(t.name,105,20,{align:'center'}); const qrUrl = `${location.origin}/join.html?teamId=${t.id}`; const imgData = await fetchImageData(`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrUrl)}`); doc.addImage(imgData,'PNG',55,40,100,100);} doc.save('hold.pdf'); }
+    async function downloadTeamPDF(){
+      const res = await axios.get('/api/admin/state');
+      const { jsPDF } = window.jspdf; const doc = new jsPDF();
+      for(let i=0;i<res.data.teams.length;i++){
+        const t=res.data.teams[i];
+        if(i>0) doc.addPage();
+        doc.setFontSize(24); doc.text(t.name,105,20,{align:'center'});
+        const qrUrl = `${getBase()}/join.html?t=${encodeURIComponent(TENANT)}&teamId=${t.id}`;
+        const imgData = await fetchImageData(`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrUrl)}`);
+        doc.addImage(imgData,'PNG',55,40,100,100);
+      }
+      doc.save('hold.pdf');
+    }
 
     // Events
-    async function createAdminEvent(){ const name=document.getElementById('eventName').value.trim(); const teamIds=Array.from(document.getElementById('eventTeams').selectedOptions).map(o=>o.value); const taskIds=Array.from(document.getElementById('eventTasks').selectedOptions).map(o=>o.value); if(!name||teamIds.length===0||taskIds.length===0){ alert('Udfyld navn og vælg mindst ét hold og én opgave.'); return; } await axios.post('/api/admin/events',{ name,teamIds,taskIds }); document.getElementById('eventName').value=''; Array.from(document.getElementById('eventTeams').options).forEach(o=>o.selected=false); Array.from(document.getElementById('eventTasks').options).forEach(o=>o.selected=false); await loadEvents(); alert('Event oprettet'); }
-    async function loadEvents(){ const r=await axios.get('/api/admin/events'); events=r.data.events||[]; const tbody=document.querySelector('#eventsTable tbody'); tbody.innerHTML=''; const sel=document.getElementById('eventSelectEdit'); sel.innerHTML=''; events.forEach(ev=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${ev.name}</td><td>${ev.teamIds.length}</td><td>${ev.taskIds.length}</td><td><button onclick="downloadEventTeamsPDF('${ev.id}')">Event Hold PDF</button> <button onclick="downloadEventTasksPDF('${ev.id}')">Event Opgave PDF</button></td>`; tbody.appendChild(tr); sel.append(new Option(ev.name, ev.id)); }); }
-    async function appendToEvent(){ const eventId=document.getElementById('eventSelectEdit').value; if(!eventId){ alert('Vælg et event'); return; } const teamIds=Array.from(document.getElementById('eventTeamsEdit').selectedOptions).map(o=>o.value); const taskIds=Array.from(document.getElementById('eventTasksEdit').selectedOptions).map(o=>o.value); if(teamIds.length===0 && taskIds.length===0){ alert('Vælg mindst ét hold eller én opgave'); return; } await axios.post(`/api/admin/events/${eventId}/append`,{ teamIds, taskIds }); Array.from(document.getElementById('eventTeamsEdit').options).forEach(o=>o.selected=false); Array.from(document.getElementById('eventTasksEdit').options).forEach(o=>o.selected=false); await loadEvents(); alert('Tilføjet til event'); }
-
-    async function downloadEventTeamsPDF(eventId){ const ev=events.find(e=>e.id===eventId); if(!ev) return; const { jsPDF } = window.jspdf; const doc=new jsPDF(); for(let i=0;i<ev.teamIds.length;i++){ const t=teams.find(x=>x.id===ev.teamIds[i]); if(!t) continue; if(i>0) doc.addPage(); doc.setFontSize(22); doc.text(`${ev.name} – ${t.name}`,105,18,{align:'center'}); const url=`${location.origin}/join.html?teamId=${t.id}&eventId=${ev.id}`; const img=await fetchImageData(`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`); doc.addImage(img,'PNG',55,30,100,100);} doc.save(`event_${eventId}_teams.pdf`); }
-
+    async function createAdminEvent(){
+      const name=document.getElementById('eventName').value.trim();
+      const teamIds=Array.from(document.getElementById('eventTeams').selectedOptions).map(o=>o.value);
+      const taskIds=Array.from(document.getElementById('eventTasks').selectedOptions).map(o=>o.value);
+      if(!name||teamIds.length===0||taskIds.length===0){
+        alert('Udfyld navn og vælg mindst ét hold og én opgave.');
+        return;
+      }
+      await axios.post('/api/admin/events',{ name,teamIds,taskIds });
+      document.getElementById('eventName').value='';
+      Array.from(document.getElementById('eventTeams').options).forEach(o=>o.selected=false);
+      Array.from(document.getElementById('eventTasks').options).forEach(o=>o.selected=false);
+      await loadEvents();
+      alert('Event oprettet');
+    }
+    async function loadEvents(){
+      const r=await axios.get('/api/admin/events'); events=r.data.events||[];
+      const tbody=document.querySelector('#eventsTable tbody'); tbody.innerHTML='';
+      const sel=document.getElementById('eventSelectEdit'); sel.innerHTML='';
+      events.forEach(ev=>{
+        const tr=document.createElement('tr');
+        tr.innerHTML=
+          `<td>${ev.name}</td>
+           <td>${ev.teamIds.length}</td>
+           <td>${ev.taskIds.length}</td>
+           <td>
+             <button onclick="downloadEventTeamsPDF('${ev.id}')">Event Hold PDF</button>
+             <button onclick="downloadEventTasksPDF('${ev.id}')">Event Opgave PDF</button>
+           </td>`;
+        tbody.appendChild(tr);
+        sel.append(new Option(ev.name, ev.id));
+      });
+    }
+    async function appendToEvent(){
+      const eventId=document.getElementById('eventSelectEdit').value;
+      if(!eventId){ alert('Vælg et event'); return; }
+      const teamIds=Array.from(document.getElementById('eventTeamsEdit').selectedOptions).map(o=>o.value);
+      const taskIds=Array.from(document.getElementById('eventTasksEdit').selectedOptions).map(o=>o.value);
+      if(teamIds.length===0 && taskIds.length===0){ alert('Vælg mindst ét hold eller én opgave'); return; }
+      await axios.post(`/api/admin/events/${eventId}/append`,{ teamIds, taskIds });
+      Array.from(document.getElementById('eventTeamsEdit').options).forEach(o=>o.selected=false);
+      Array.from(document.getElementById('eventTasksEdit').options).forEach(o=>o.selected=false);
+      await loadEvents();
+      alert('Tilføjet til event');
+    }
+    async function downloadEventTeamsPDF(eventId){
+      const ev=events.find(e=>e.id===eventId); if(!ev) return;
+      const { jsPDF } = window.jspdf; const doc=new jsPDF();
+      for(let i=0;i<ev.teamIds.length;i++){
+        const t=teams.find(x=>x.id===ev.teamIds[i]); if(!t) continue;
+        if(i>0) doc.addPage();
+        doc.setFontSize(22); doc.text(`${ev.name} – ${t.name}`,105,18,{align:'center'});
+        const url=`${getBase()}/join.html?t=${encodeURIComponent(TENANT)}&teamId=${t.id}&eventId=${ev.id}`;
+        const img=await fetchImageData(`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`);
+        doc.addImage(img,'PNG',55,30,100,100);
+      }
+      doc.save(`event_${eventId}_teams.pdf`);
+    }
     // Event Opgave PDF – 3 kolonner × 2 rækker pr side, tynd ramme
     async function downloadEventTasksPDF(eventId){
       const ev = events.find(e => e.id === eventId); if (!ev) return;
@@ -376,8 +549,8 @@
           const lines = doc.splitTextToSize(`Svar: ${opt.text}\nPoint: ${opt.points}`, labelWidth);
           doc.text(lines, cellX + labelPadX, cellY);
 
-          // QR (unik for svarmulighed)
-          const url = `${location.origin}/scan?taskId=${task.id}&optionIndex=${i}`;
+          // QR (unik for svarmulighed) + tenant
+          const url = `${getBase()}/scan?t=${encodeURIComponent(TENANT)}&taskId=${task.id}&optionIndex=${i}`;
           const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize*3}x${qrSize*3}&data=${encodeURIComponent(url)}`;
           const imgData = await fetchImageData(qrApi);
           doc.addImage(imgData, 'PNG', cellX + labelPadX, cellY + 12, qrSize, qrSize);
@@ -389,21 +562,68 @@
     }
 
     // Logs & Backup
-    async function loadLogs(){ const teamId=document.getElementById('logTeamFilter').value; const r=await axios.get('/api/admin/logs',{ params: teamId ? { teamId } : {} }); const tbody=document.querySelector('#logsTable tbody'); tbody.innerHTML=''; r.data.logs.forEach(l=>{ const dt=new Date(l.time); const tr=document.createElement('tr'); tr.innerHTML=`<td>${dt.toLocaleString()}</td><td>${l.message || ''}</td>`; tbody.appendChild(tr); }); }
+    async function loadLogs(){
+      const teamId=document.getElementById('logTeamFilter').value;
+      const r=await axios.get('/api/admin/logs',{ params: teamId ? { teamId } : {} });
+      const tbody=document.querySelector('#logsTable tbody'); tbody.innerHTML='';
+      r.data.logs.forEach(l=>{
+        const dt=new Date(l.time);
+        const tr=document.createElement('tr');
+        tr.innerHTML=`<td>${dt.toLocaleString()}</td><td>${l.message || ''}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
     async function backupDb(){ window.location='/api/admin/backup'; }
-    async function clearLogs(){ if(!confirm('Er du sikker på at du vil rydde loggen?')) return; await axios.post('/api/admin/logs/clear'); await loadLogs(); alert('Loggen er ryddet.'); }
+    async function clearLogs(){
+      if(!confirm('Er du sikker på at du vil rydde loggen?')) return;
+      await axios.post('/api/admin/logs/clear');
+      await loadLogs();
+      alert('Loggen er ryddet.');
+    }
 
     // Control
     async function resetTeams(){ if(!confirm('Slet alle hold og records?')) return; await axios.post('/api/admin/teams/reset'); loadState(); }
     async function resetEvent(){ if(!confirm('Nulstil scores og records?')) return; await axios.post('/api/admin/reset'); loadState(); }
-    async function addBonus(){ const teamId=document.getElementById('bonusTeamSelect').value; const extra=+document.getElementById('bonusPointsInput').value; if (!teamId || !extra) { alert('Vælg hold og indtast antal bonuspoint'); return; } await axios.post('/api/admin/bonus',{ teamId, extra }); const teamName = (teams.find(t=>t.id===teamId)?.name) || 'Hold'; alert(`Bonus givet: ${extra} point til ${teamName}.`); loadState(); }
+    async function addBonus(){
+      const teamId=document.getElementById('bonusTeamSelect').value;
+      const extra=+document.getElementById('bonusPointsInput').value;
+      if (!teamId || !extra) { alert('Vælg hold og indtast antal bonuspoint'); return; }
+      await axios.post('/api/admin/bonus',{ teamId, extra });
+      const teamName = (teams.find(t=>t.id===teamId)?.name) || 'Hold';
+      alert(`Bonus givet: ${extra} point til ${teamName}.`);
+      loadState();
+    }
 
-    // Users
-    async function loadUsers(){ const r=await axios.get('/api/admin/users'); users=r.data.users||[]; const tbody=document.getElementById('usersTableBody'); tbody.innerHTML=''; users.forEach(u=>{ const tr=document.createElement('tr'); const dt=u.created?new Date(u.created).toLocaleString():''; tr.innerHTML=`<td>${u.username}</td><td>${dt}</td>`; tbody.appendChild(tr); }); }
-    async function addUser(){ const username=document.getElementById('newUserName').value.trim(); const password=document.getElementById('newUserPass').value; if(!username||!password){ alert('Udfyld brugernavn og adgangskode'); return; } try{ await axios.post('/api/admin/users',{ username, password }); document.getElementById('newUserName').value=''; document.getElementById('newUserPass').value=''; await loadUsers(); alert('Bruger oprettet'); } catch(e){ alert(e?.response?.data?.error||'Kunne ikke oprette bruger'); } }
+    // Master (owner only)
+    async function loadUsersMaster(){
+      const r = await axios.get('/api/master/users');
+      const tbody = document.getElementById('usersTableBody'); tbody.innerHTML='';
+      r.data.users.forEach(u=>{
+        const dt = u.created ? new Date(u.created).toLocaleString() : '';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${u.username}</td><td>${u.role}</td><td>${dt}</td>
+                        <td><button onclick="downloadTenant('${u.username}')">Hent DB</button></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+    async function masterAddUser(){
+      const username = document.getElementById('newUserName').value.trim();
+      const password = document.getElementById('newUserPass').value;
+      const role     = document.getElementById('newUserRole').value;
+      if(!username||!password){ alert('Udfyld brugernavn og adgangskode'); return; }
+      try{
+        await axios.post('/api/master/users',{ username, password, role });
+        document.getElementById('newUserName').value='';
+        document.getElementById('newUserPass').value='';
+        await loadUsersMaster();
+        alert('Bruger oprettet');
+      } catch(e){
+        alert(e?.response?.data?.error||'Kunne ikke oprette bruger');
+      }
+    }
+    function downloadTenant(tenant){ window.location = `/api/master/backup/${encodeURIComponent(tenant)}`; }
 
-    // Boot
-    window.onload = loadState;
+    window.onload = boot;
   </script>
 </body>
 </html>

@@ -2,68 +2,123 @@
 <html lang="da">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Login</title>
+  <title>QRQUIZ V2 • Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <style>
-    .note { color:#c00; margin-top:8px; }
-    .card { max-width:360px; margin:40px auto; padding:20px; border:1px solid #eee; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.04); }
-    .muted { color:#777; font-size:0.9em }
+    body{
+      background:#f3f4f6; color:#111827;
+      font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Helvetica,Arial,sans-serif;
+      margin:0; min-height:100dvh; display:flex; align-items:center; justify-content:center;
+      padding: clamp(12px, 4vw, 24px);
+      padding-left:max(16px,env(safe-area-inset-left));
+      padding-right:max(16px,env(safe-area-inset-right));
+      padding-top:max(16px,env(safe-area-inset-top));
+      padding-bottom:max(16px,env(safe-area-inset-bottom));
+      -webkit-text-size-adjust:100%;
+    }
+    .wrap{ width:100%; max-width:720px; display:grid; gap:16px; }
+    .card{
+      background:#fff; border:1px solid #e5e7eb; border-radius:16px;
+      box-shadow:0 8px 30px rgba(0,0,0,.06); padding:20px;
+    }
+    h1{ margin:0 0 6px 0; font-size:22px; }
+    label{ display:block; font-weight:600; margin:8px 0 4px; }
+    input{ width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:10px; }
+    button{ border:1px solid #2563eb; background:#2563eb; color:#fff; padding:10px 14px; border-radius:10px; cursor:pointer; }
+    .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .muted{ color:#6b7280; }
+    .error{ color:#dc2626; font-weight:600; }
+    a{ color:#2563eb; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+    .header{
+      position:fixed; left:0; right:0; top:0;
+      background:#1d4ed8; color:#fff; padding:10px 16px; font-weight:700;
+      letter-spacing:.3px; text-align:center;
+      box-shadow:0 1px 2px rgba(0,0,0,.08);
+    }
+    .spacer{ height:52px; } /* plads til header */
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Log ind</h1>
-    <form id="loginForm" method="POST" action="/login">
-      <input name="username" placeholder="Brugernavn" required>
-      <input name="password" type="password" placeholder="Adgangskode" required>
-      <button type="submit">Log ind</button>
-      <div id="loginMsg" class="note" style="display:none"></div>
-    </form>
+  <div class="header">QRQUIZ V2</div>
+  <div class="spacer"></div>
 
-    <div id="setupBox" style="display:none; margin-top:20px;">
-      <h3>Første gangs opsætning</h3>
-      <p class="muted">Ingen brugere fundet. Opret første admin-bruger.</p>
+  <div class="wrap">
+    <!-- Setup-kort (vises hvis ingen brugere findes) -->
+    <div id="setupCard" class="card" style="display:none;">
+      <h1>Første opsætning</h1>
+      <p class="muted">Opret den første bruger (bliver <strong>master</strong>).</p>
       <form id="setupForm">
-        <input name="username" placeholder="Nyt brugernavn" required>
-        <input name="password" type="password" placeholder="Ny adgangskode" required>
-        <button type="submit">Opret admin</button>
+        <label>Brugernavn</label>
+        <input name="username" required placeholder="F.eks. mago">
+        <label>Adgangskode</label>
+        <input name="password" type="password" required placeholder="••••••••">
+        <div class="row" style="margin-top:10px;">
+          <button type="submit">Opret</button>
+          <span id="setupErr" class="error"></span>
+        </div>
       </form>
-      <div id="setupMsg" class="note" style="display:none"></div>
+    </div>
+
+    <!-- Login-kort -->
+    <div id="loginCard" class="card" style="display:none;">
+      <h1>Log ind</h1>
+      <form method="post" action="/login">
+        <label>Brugernavn</label>
+        <input name="username" required>
+        <label>Adgangskode</label>
+        <input name="password" type="password" required>
+        <div class="row" style="margin-top:10px;">
+          <button type="submit">Log ind</button>
+          <span id="loginErr" class="error"></span>
+        </div>
+      </form>
+    </div>
+
+    <!-- Kontakt-boks -->
+    <div class="card">
+      <h1>Brug for login?</h1>
+      <p>Kontakt <strong>Magnus Olesen</strong> på
+        <a href="mailto:mago@techcollege.dk">mago@techcollege.dk</a>
+        for at få et login.</p>
+      <p class="muted">Du kan også scanne en hold-QR-kode direkte fra deltagerens enhed for at tilslutte et hold.</p>
     </div>
   </div>
 
   <script>
-    // Vis fejl fra redirect
-    const url = new URL(location.href);
-    if (url.searchParams.get('error') === '1') {
-      const n = document.getElementById('loginMsg'); n.style.display = 'block'; n.textContent = 'Forkert login.';
-    }
-    if (url.searchParams.get('needLogin') === '1') {
-      const n = document.getElementById('loginMsg'); n.style.display = 'block'; n.textContent = 'Du skal være logget ind for at se admin.';
-    }
+    (async function init(){
+      try{
+        const params = new URLSearchParams(location.search);
+        if(params.get('error')==='1'){ document.getElementById('loginErr').textContent='Forkert login.'; }
+        if(params.has('needLogin')){ document.getElementById('loginErr').textContent='Log ind for at fortsætte.'; }
 
-    // Tjek om der findes brugere – hvis ikke, vis opsætningsformular
-    (async () => {
-      try {
         const r = await axios.get('/api/auth/hasUsers');
-        if (!r.data.hasUsers) {
-          document.getElementById('setupBox').style.display = 'block';
-        }
-      } catch {}
-    })();
-
-    document.getElementById('setupForm')?.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      const payload = { username: fd.get('username'), password: fd.get('password') };
-      try {
-        await axios.post('/api/auth/setup', payload);
-        location.href = '/admin.html';
-      } catch (err) {
-        const n = document.getElementById('setupMsg'); n.style.display = 'block'; n.textContent = 'Kun muligt hvis der ingen brugere findes.';
+        const hasUsers = !!(r.data && r.data.hasUsers);
+        document.getElementById('loginCard').style.display = hasUsers ? 'block' : 'none';
+        document.getElementById('setupCard').style.display = hasUsers ? 'none' : 'block';
+      } catch(e){
+        document.getElementById('loginCard').style.display='block';
       }
-    });
+
+      const setupForm = document.getElementById('setupForm');
+      if(setupForm){
+        setupForm.addEventListener('submit', async (ev)=>{
+          ev.preventDefault();
+          const fd = new FormData(setupForm);
+          try{
+            await axios.post('/api/auth/setup', {
+              username: fd.get('username'),
+              password: fd.get('password')
+            });
+            location.href = '/admin.html';
+          }catch(err){
+            document.getElementById('setupErr').textContent = (err?.response?.data?.error)||'Kunne ikke oprette første bruger';
+          }
+        });
+      }
+    })();
   </script>
 </body>
 </html>

@@ -14,17 +14,22 @@
       margin:0;
 
       /* Mobilvenligt layout */
-      min-height:100dvh; /* undgår iOS 100vh-issues */
+      min-height:100dvh;
       display:flex; align-items:center; justify-content:center;
 
       /* Behagelig padding + safe areas */
       padding: clamp(12px, 4vw, 24px);
       padding-left: max(16px, env(safe-area-inset-left));
       padding-right: max(16px, env(safe-area-inset-right));
-      padding-top: max(16px, env(safe-area-inset-top));
+      padding-top: max(16px, env(safe-area-inset-top)) + 52px; /* plads til header */
       padding-bottom: max(16px, env(safe-area-inset-bottom));
 
       -webkit-text-size-adjust: 100%;
+    }
+    .header {
+      position:fixed; left:0; right:0; top:0; z-index:10;
+      background:#1d4ed8; color:#fff; padding:12px 16px; text-align:center;
+      font-weight:700; letter-spacing:.3px; box-shadow:0 1px 2px rgba(0,0,0,.08);
     }
     .card {
       width:100%; max-width:560px;
@@ -45,6 +50,9 @@
 </head>
 <body>
 
+  <!-- HEADER med event-navn hvis muligt -->
+  <div class="header" id="headerTitle">QRQUIZ V2</div>
+
   <!-- STATE: JOINED -->
   <div id="state-joined" class="card" style="display:none">
     <h1>Velkommen!</h1>
@@ -64,7 +72,23 @@
   </div>
 
   <script>
+    async function setHeaderFromEvent() {
+      try {
+        const evRes = await axios.get('/api/event'); // { event: {id,name} | null }
+        if (evRes.data && evRes.data.event && evRes.data.event.name) {
+          document.getElementById('headerTitle').textContent = evRes.data.event.name;
+        } else {
+          document.getElementById('headerTitle').textContent = 'QRQUIZ V2';
+        }
+      } catch {
+        document.getElementById('headerTitle').textContent = 'QRQUIZ V2';
+      }
+    }
+
     async function loadState() {
+      // Vis event-navn i header uanset om man er joined
+      setHeaderFromEvent();
+
       const params = new URLSearchParams(window.location.search);
       const already    = params.has('already');
       const notInEvent = params.has('notinEvent');
@@ -103,6 +127,7 @@
           fb.textContent = '';
         }
       } catch (e) {
+        // Ikke på et hold
         notJoinedEl.style.display = 'block';
       }
     }

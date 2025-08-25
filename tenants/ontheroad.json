@@ -1,0 +1,603 @@
+{
+  "teams": [
+    {
+      "id": "6bc93d25-a057-4137-94c7-dace0ee3329b",
+      "name": "Hold 1",
+      "score": 0
+    },
+    {
+      "id": "4f7e8c7f-49dd-4db1-bfa6-1a8184cfeffc",
+      "name": "Hold 2",
+      "score": 0
+    },
+    {
+      "id": "0709761d-4ad2-41a8-9e24-bf3a341d6f60",
+      "name": "Hold 3",
+      "score": 0
+    },
+    {
+      "id": "71a135df-506a-4000-ade8-028c107699c1",
+      "name": "Hold 4",
+      "score": 0
+    },
+    {
+      "id": "f755289d-b7e6-4768-85b6-ee1aa691dc9c",
+      "name": "Hold 5",
+      "score": 0
+    },
+    {
+      "id": "0016a6fb-e13a-4b52-8390-370f260a604f",
+      "name": "Hold 6",
+      "score": 0
+    }
+  ],
+  "tasks": [
+    {
+      "id": "b0fcee09-ab69-441c-85e8-76e2c14f955e",
+      "title": "Test om det virker",
+      "options": [
+        {
+          "text": "Kode 1",
+          "points": 10
+        },
+        {
+          "text": "Kode 2",
+          "points": 20
+        }
+      ]
+    },
+    {
+      "id": "f2443c7c-0844-4331-ac2f-76301530e65e",
+      "title": "Opgave 1 - Hjulskift, Gennemsnitstid",
+      "options": [
+        {
+          "text": "Fra 0-30 sek",
+          "points": 40
+        },
+        {
+          "text": "Fra 30-180 sek",
+          "points": 30
+        },
+        {
+          "text": "Fra 180-360 sek",
+          "points": 20
+        },
+        {
+          "text": "Fra 360- sek",
+          "points": 10
+        }
+      ]
+    },
+    {
+      "id": "e9558f77-1076-4740-a208-b33aa9f10515",
+      "title": "Opgave 1 - Hvad er adressen på TECHCOLLEGE - Auto?",
+      "options": [
+        {
+          "text": "Øster Uttrupvej 1, 9000 Aalborg",
+          "points": 0
+        },
+        {
+          "text": "Rørdalsvej 10, 9000 Aalborg",
+          "points": 0
+        },
+        {
+          "text": "Teglværket 2, 9400 Nørresundby",
+          "points": 10
+        }
+      ]
+    },
+    {
+      "id": "7f71ae62-addb-4011-84ff-82bdf3f328c8",
+      "title": "Opgave 1 - Hvor skille grænsen om man laver lastbiler eller personbiler? (køretøjets vægt)",
+      "options": [
+        {
+          "text": "3500 kg",
+          "points": 10
+        },
+        {
+          "text": "5500 kg",
+          "points": 0
+        },
+        {
+          "text": "7500 kg",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "bbe1dc6a-3e64-4553-9aad-5be509ac189b",
+      "title": "Opgave 1 - Hvad får man hvis man er en EUX elev?",
+      "options": [
+        {
+          "text": "Et svendebrev og en studenterhue",
+          "points": 10
+        },
+        {
+          "text": "Ekstra engelsk undervisning",
+          "points": 0
+        },
+        {
+          "text": "Ingen af delene",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "672c6723-3140-479c-aeb7-9b0616e1805c",
+      "title": "Opgave 1 - Hvad laver en flytekniker?",
+      "options": [
+        {
+          "text": "Billede 1",
+          "points": 0
+        },
+        {
+          "text": "Billede 2",
+          "points": 10
+        },
+        {
+          "text": "Billede 3",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "093ee615-5123-4594-a646-9d8dac2ff5eb",
+      "title": "Opgave 1 - Hvad laver en lastvognsmekaniker?",
+      "options": [
+        {
+          "text": "Billede 1",
+          "points": 0
+        },
+        {
+          "text": "Billede 2",
+          "points": 10
+        },
+        {
+          "text": "Billede 3",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "7551ee85-13de-484b-8b4d-e84c17760ac0",
+      "title": "Skal man have engelsk som grundfag på erhvervsuddannelse?",
+      "options": [
+        {
+          "text": "Det er valgfrit, man bestemmer selv om man gider.",
+          "points": 0
+        },
+        {
+          "text": "Ja, man skal have engelsk.",
+          "points": 10
+        },
+        {
+          "text": "Nej, engelsk er lige meget på erhvervsuddannelse.",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "443bd23b-4822-4c7a-aad2-bd26afa553a9",
+      "title": "Opgave 2 - Hvad vejer en mobiltelefonholder? (let opgave)",
+      "options": [
+        {
+          "text": "145,56 g",
+          "points": 0
+        },
+        {
+          "text": "140,26 g",
+          "points": 10
+        },
+        {
+          "text": "100,22 g",
+          "points": 0
+        },
+        {
+          "text": "155,68 g",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "6bbb1264-9cb0-4ee5-a91a-42da67ec6741",
+      "title": "Opgave 2 - Hvad vejer en mobiltelefonholder? (Svær opgave)",
+      "options": [
+        {
+          "text": "145,56 g",
+          "points": 0
+        },
+        {
+          "text": "140,26 g",
+          "points": 0
+        },
+        {
+          "text": "100,22 g",
+          "points": 0
+        },
+        {
+          "text": "155,68 g",
+          "points": 0
+        },
+        {
+          "text": "134,68 g",
+          "points": 20
+        },
+        {
+          "text": "126,35 g",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "545e4b57-0fc0-4d68-9a51-a3a9f91332fd",
+      "title": "Opgave 2 - Hvordan beskytter man sine øjne når man svejser?",
+      "options": [
+        {
+          "text": "Man bruger solbriller",
+          "points": 0
+        },
+        {
+          "text": "Man bruger høreværn",
+          "points": 0
+        },
+        {
+          "text": "Man bruger en svejseskærm",
+          "points": 10
+        }
+      ]
+    },
+    {
+      "id": "09463efa-25fd-40bd-8842-23069a15cd1a",
+      "title": "Opgave 2 - Hvor mange grundforløb er der på Smede-Uddannelsen (GF)",
+      "options": [
+        {
+          "text": "GF1",
+          "points": 0
+        },
+        {
+          "text": "GF1+GF2",
+          "points": 10
+        },
+        {
+          "text": "GF1+GF2+GF3",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "9f9c84b7-f5b9-4829-8b17-ba59a807b676",
+      "title": "Opgave 2 - Hvad laver en smed?",
+      "options": [
+        {
+          "text": "Billede 1",
+          "points": 0
+        },
+        {
+          "text": "Billede 2",
+          "points": 10
+        },
+        {
+          "text": "Billede 3",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "7f07b653-6758-4765-9a5b-21f2c8853698",
+      "title": "Opgave 3 - Hvor mange volt skal en bilradio bruge, for at kunne tænde?",
+      "options": [
+        {
+          "text": "6 volt",
+          "points": 0
+        },
+        {
+          "text": "12 volt",
+          "points": 10
+        },
+        {
+          "text": "24 volt",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "abfec206-a3e7-45a2-86c1-d7151ba6aa19",
+      "title": "Opgave 3 - Hvor lang tid tager uddannelsen som personvognsmekaniker?",
+      "options": [
+        {
+          "text": "2½ år",
+          "points": 0
+        },
+        {
+          "text": "4½ år",
+          "points": 10
+        },
+        {
+          "text": "6½ år",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "784868e1-171d-458a-94ad-47efaef6a11b",
+      "title": "Opgave 3 - Hvad gør du hvis du ikke kan finde en læreplads?",
+      "options": [
+        {
+          "text": "Siger øv og starter på en anden uddannelse :-(",
+          "points": 0
+        },
+        {
+          "text": "Du kommer ikke videre i din uddannelse før du finder en læreplads!",
+          "points": 0
+        },
+        {
+          "text": "Fortsætter din uddannelse i det der kaldes skolepratik :-)",
+          "points": 10
+        }
+      ]
+    },
+    {
+      "id": "5fdec5da-08a2-494b-ad57-20b01ed21b2e",
+      "title": "Opgave 4 - Hvor mange bars tryk (kompression) er der på motoren?",
+      "options": [
+        {
+          "text": "0,5-1 bar",
+          "points": 0
+        },
+        {
+          "text": "2-9 bar",
+          "points": 10
+        },
+        {
+          "text": "14-18 bar",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "f0029d28-10df-4819-b061-c4d8e62e8e89",
+      "title": "Opgave 4 - Hvad kalder man det værktøj, som man bruger til at måle hvor tyk en bolt eller en møtrik er?",
+      "options": [
+        {
+          "text": "skydelærer",
+          "points": 10
+        },
+        {
+          "text": "siglelærer",
+          "points": 0
+        },
+        {
+          "text": "tommestok",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "7692dfc3-ce11-4d36-9347-02ddf7fb7a29",
+      "title": "Opgave 4 - Hvor mange mm er 1,718 meter",
+      "options": [
+        {
+          "text": "1,781 mm",
+          "points": 0
+        },
+        {
+          "text": "178,1 mm",
+          "points": 0
+        },
+        {
+          "text": "1781 mm",
+          "points": 10
+        },
+        {
+          "text": "17,81 mm",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "f8f5dc6a-c609-41eb-8023-6b7cfa46aa4f",
+      "title": "Opgave 4 - Hvordan udregner du rumfanget i en kasse?",
+      "options": [
+        {
+          "text": "Længde x Højde x Bredde",
+          "points": 10
+        },
+        {
+          "text": "Længde + Højde + Bredde",
+          "points": 0
+        },
+        {
+          "text": "Længde x Højde + Bredde",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "f3e58cee-4fc3-47fa-9dfb-0af460fd71df",
+      "title": "Opgave 4 - De 3 vigtigste ingredienser for at en motor kan starte og kører er?",
+      "options": [
+        {
+          "text": "Kompression - Brændstof - Tænding",
+          "points": 10
+        },
+        {
+          "text": "Luft - Benzin - Tændstikker",
+          "points": 0
+        },
+        {
+          "text": "Øl - Whiskey - Hornmusik",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "42ec8686-b588-44d3-9674-36501a86dd94",
+      "title": "Opgave 4 - En kompressionsmåling kan give dig en billede på om motoren har:",
+      "options": [
+        {
+          "text": "Hvor mange kubik en motor har",
+          "points": 0
+        },
+        {
+          "text": "Ødelagte stempelringe og fejljusterede ventiler",
+          "points": 10
+        },
+        {
+          "text": "En kompressor power turbo motor effekt",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "28824392-058a-449e-b1f8-40391728d696",
+      "title": "Opgave 5 - Hvor mange millimeter er hovedet på en 10mm bolt/møtrik?",
+      "options": [
+        {
+          "text": "15 millimeter",
+          "points": 0
+        },
+        {
+          "text": "16 millimeter",
+          "points": 0
+        },
+        {
+          "text": "17 millimeter",
+          "points": 10
+        }
+      ]
+    },
+    {
+      "id": "be3ae62c-411c-4c73-adc8-9266f69ff3fc",
+      "title": "Hvor tager du uddannelsen som industriktekniker?",
+      "options": [
+        {
+          "text": "Sigrid Undsetsvej 3, 9220 Aalborg Ø",
+          "points": 10
+        },
+        {
+          "text": "Øster Uttrupvej 1, 9000 Aalborg",
+          "points": 0
+        },
+        {
+          "text": "Struervej 70, 9220 Aalborg Ø",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "65cc701b-7256-4438-b04d-4d416a679769",
+      "title": "Opgave 5 - Hvad får du som bevis, når du er færdig med din erhvervsuddannelse?",
+      "options": [
+        {
+          "text": "Et svendebrev",
+          "points": 10
+        },
+        {
+          "text": "En lagkage og en medalje",
+          "points": 0
+        },
+        {
+          "text": "Et svendestykke",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "c99d9940-730f-49e3-8800-7d26ae58bd0b",
+      "title": "Opgave 6 - Får du løn under din uddannelse, når du finder en læreplads?",
+      "options": [
+        {
+          "text": "Nej, du får desværre ingen løn for det",
+          "points": 0
+        },
+        {
+          "text": "Ja, du får løn",
+          "points": 10
+        }
+      ]
+    },
+    {
+      "id": "d5efd035-299b-4e26-87f4-7b3e53d3f758",
+      "title": "Opgave 6 - Hvilken fagretning arbejder jeres lærer på?",
+      "options": [
+        {
+          "text": "Auto",
+          "points": 10
+        },
+        {
+          "text": "Metal 10",
+          "points": 10
+        },
+        {
+          "text": "Murer",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "5d2799ef-439e-4a58-8803-d40bebe85cba",
+      "title": "Opgave 6 - Hvornår starter de forskellige uddannelser op på Konstruktion, Produktion og Biler?",
+      "options": [
+        {
+          "text": "4/10",
+          "points": 0
+        },
+        {
+          "text": "14/7",
+          "points": 0
+        },
+        {
+          "text": "9/8",
+          "points": 10
+        }
+      ]
+    }
+  ],
+  "records": [],
+  "events": [
+    {
+      "id": "fcd32167-7892-4709-b6b8-74fb12021c9c",
+      "name": "On the Road",
+      "teamIds": [
+        "6bc93d25-a057-4137-94c7-dace0ee3329b",
+        "4f7e8c7f-49dd-4db1-bfa6-1a8184cfeffc",
+        "0709761d-4ad2-41a8-9e24-bf3a341d6f60",
+        "71a135df-506a-4000-ade8-028c107699c1",
+        "f755289d-b7e6-4768-85b6-ee1aa691dc9c",
+        "0016a6fb-e13a-4b52-8390-370f260a604f"
+      ],
+      "taskIds": [
+        "b0fcee09-ab69-441c-85e8-76e2c14f955e",
+        "f2443c7c-0844-4331-ac2f-76301530e65e",
+        "e9558f77-1076-4740-a208-b33aa9f10515",
+        "7f71ae62-addb-4011-84ff-82bdf3f328c8",
+        "bbe1dc6a-3e64-4553-9aad-5be509ac189b",
+        "672c6723-3140-479c-aeb7-9b0616e1805c",
+        "093ee615-5123-4594-a646-9d8dac2ff5eb",
+        "7551ee85-13de-484b-8b4d-e84c17760ac0",
+        "443bd23b-4822-4c7a-aad2-bd26afa553a9",
+        "6bbb1264-9cb0-4ee5-a91a-42da67ec6741",
+        "545e4b57-0fc0-4d68-9a51-a3a9f91332fd",
+        "09463efa-25fd-40bd-8842-23069a15cd1a",
+        "9f9c84b7-f5b9-4829-8b17-ba59a807b676",
+        "7f07b653-6758-4765-9a5b-21f2c8853698",
+        "abfec206-a3e7-45a2-86c1-d7151ba6aa19",
+        "784868e1-171d-458a-94ad-47efaef6a11b",
+        "5fdec5da-08a2-494b-ad57-20b01ed21b2e",
+        "f0029d28-10df-4819-b061-c4d8e62e8e89",
+        "7692dfc3-ce11-4d36-9347-02ddf7fb7a29",
+        "f8f5dc6a-c609-41eb-8023-6b7cfa46aa4f",
+        "f3e58cee-4fc3-47fa-9dfb-0af460fd71df",
+        "42ec8686-b588-44d3-9674-36501a86dd94",
+        "28824392-058a-449e-b1f8-40391728d696",
+        "be3ae62c-411c-4c73-adc8-9266f69ff3fc",
+        "65cc701b-7256-4438-b04d-4d416a679769",
+        "c99d9940-730f-49e3-8800-7d26ae58bd0b",
+        "d5efd035-299b-4e26-87f4-7b3e53d3f758",
+        "5d2799ef-439e-4a58-8803-d40bebe85cba"
+      ],
+      "created": 1756117093140
+    }
+  ],
+  "logs": []
+}

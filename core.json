@@ -15,6 +15,22 @@
       "hash": "5ca7e65bbe2c62be43a024b10cce9ed2c8ea6955f2e52b56c1b794a96bb4c3c3db74caf3f81f6bca0b577e25eab41156bb7706f4f0da32e7708fe766c804a1ec",
       "role": "admin",
       "created": 1754842253870
+    },
+    {
+      "id": "6d4dd5d0-980a-4572-b22c-a6fb7bb38f21",
+      "username": "jaol",
+      "salt": "75051e3432e43b9dcb8f818ebcc23afc",
+      "hash": "bbfc12bac1d42fdb537a9e7d5245fc0450d6fd2b7178b8be3f6521ea883e34f12653ee5fd8220e7e63104dabc5c2d50a8f678882954546f6ba6aa8c164c76327",
+      "role": "admin",
+      "created": 1754891615837
+    },
+    {
+      "id": "9446f7af-b7f2-4e53-98a3-97bc5c331a23",
+      "username": "ontheroad",
+      "salt": "6f7d80aa86b011aa894fb5345ee0e88b",
+      "hash": "d3845191cfd42a740630fda86dd1a0180934700e8b5b464fe8d166834effa72129d24ff256b240cf8a6ed52555690332ded64062f7f7275eff735cb7ed876804",
+      "role": "admin",
+      "created": 1756111325431
     }
   ]
 }

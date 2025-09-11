@@ -27,8 +27,8 @@
     {
       "id": "9446f7af-b7f2-4e53-98a3-97bc5c331a23",
       "username": "ontheroad",
-      "salt": "6f7d80aa86b011aa894fb5345ee0e88b",
-      "hash": "d3845191cfd42a740630fda86dd1a0180934700e8b5b464fe8d166834effa72129d24ff256b240cf8a6ed52555690332ded64062f7f7275eff735cb7ed876804",
+      "salt": "d743f9478d3487c20b44b42e51cc0f60",
+      "hash": "7e8e789dc8bef2ed6b058d9c2b22edfca60ebc00302925eb8743eab59d58aaa409eb4dcd3a83191879197fbb7ba997c9ec59f2dabb9bcaa08dcb729b6788343b",
       "role": "admin",
       "created": 1756111325431
     }
